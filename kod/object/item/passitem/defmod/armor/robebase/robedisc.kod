@@ -57,7 +57,7 @@ classvars:
 
 properties:
 
-   viXLAT_immortal =  XLAT_TO_SKY
+   viXLAT_immortal =  PT_REDTODKBLACK1
    viXLAT_no_knowledge =  XLAT_TO_YELLOW
    viXLAT_level_one = XLAT_TO_SKIN1
    viXLAT_level_two = XLAT_TO_SKIN2
