@@ -76,7 +76,7 @@ properties:
    piSomethingChanged = FALSE
 
    // Originally hid here for secrecy.  Now M59's worst kept secret.
-   pbEnableBetaPotions = FALSE    
+   pbEnableBetaPotions = TRUE    
 
    poInvestigator = $
    plSuspects = $
@@ -709,7 +709,7 @@ messages:
 
    FlipBetaOff()
    {
-      pbEnablebetaPotions = FALSE;
+      pbEnablebetaPotions = TRUE;
 
       return;
    }
