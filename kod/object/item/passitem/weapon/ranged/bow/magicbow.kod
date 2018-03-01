@@ -27,7 +27,7 @@ classvars:
    vrName = MagicBow_name_rsc
    vrDesc = MagicBow_desc_rsc
 
-   viValue_average = 3000
+   viValue_average = 250000
    viBulk = 70
    viWeight = 70
 
@@ -38,13 +38,13 @@ properties:
    viHit_roll_modifier = 100
 
    // What's the basic color of the wood?
-   viBaseXLAT = XLAT_TO_SKIN4
+   viBaseXLAT = XLAT_TO_YELLOW
 
    piAttack_Type = ATCK_WEAP_MAGIC + ATCK_WEAP_PIERCE
 
 messages:
 
-   SetColor(iColor=XLAT_TO_SKIN4)
+   SetColor(iColor=XLAT_TO_YELLOW)
    {
       viBaseXLAT = iColor;
       Send(self,@UpdateColor);
