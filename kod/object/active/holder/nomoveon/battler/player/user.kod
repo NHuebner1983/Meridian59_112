@@ -28,8 +28,8 @@ constants:
    GOOD_COLOR = 82
    BAD_COLOR =  83
 
-   // How much wait between suicides?  Curently 10 minutes.
-   SUICIDE_REPEAT_TIME = 600 
+   // How much wait between suicides?  Curently 2 minutes. Originally 10 minutes.
+   SUICIDE_REPEAT_TIME = 120
 
    // What's the length of the Posting timer check? Currently 30 mins.
    NEWS_POSTING_DELAY = 30 * 60
@@ -49,20 +49,22 @@ constants:
    //  accounts.
    USER_INACTIVE_TIME = 60 * 60 * 24 * 60
 
-   // What's the "speed" of movement for the client?
+   // What's the "speed" of movement for the client? Run originally 50.
    USER_WALKING_SPEED = 25
-   USER_RUNNING_SPEED = 50
+   USER_RUNNING_SPEED = 100
 
    // How many packets incoming per second do we allow?
    INCOMING_PACKET_THROTTLE = 25
 
    // What's the lower threshold for being able to run?  Below this, we can't
-   //  run.
-   VIGOR_RUN_THRESHOLD = 10
+   //  run. 
+   // Originally 10
+   VIGOR_RUN_THRESHOLD = 5
 
    // Speedhack/cheating detection:
    // What's the maximum number of times we should log a violation?
-   MAX_LOGGED_THRESHOLD = 50
+   // Originally 50
+   MAX_LOGGED_THRESHOLD = 5
 
 resources:
 
