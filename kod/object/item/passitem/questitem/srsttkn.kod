@@ -52,7 +52,7 @@ properties:
 
 messages:
 
-   Constructor(temporary=TRUE,lifetime=-1,tradeable=FALSE)
+   Constructor(temporary=TRUE,lifetime=-1,tradeable=TRUE)
    {
       pbTradeable = tradeable;
       pbTemporary = temporary;
@@ -79,6 +79,8 @@ messages:
 
    ReqNewOwner(what = $)
    {
+      return TRUE;
+	  
       if IsClass(poOwner,&Room)
       {
          return TRUE;
