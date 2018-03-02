@@ -2345,6 +2345,9 @@
    MAX_XP_DEATH_LOSS = 10000
    MAX_MANA = 200
    MAX_VIGOR = 200
+
+   // If you change your MAX_HP higher than 150, you must adjust this value to support it.
+   MAX_STAMINA = 100
    
    // These HP levels can be used to replace monster hard-coded values.
    // To give you an idea, Giant Rats would be Level_1_HP and so would a handful of others.
