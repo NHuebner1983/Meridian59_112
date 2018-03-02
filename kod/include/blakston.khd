@@ -2337,13 +2337,15 @@
 
    // Player flags
 
-   PKILL_ENABLE_HP = 50
+   PKILL_ENABLE_HP = 100
    MIN_HP = 20
-   MAX_HP = 150
-   MAX_CALCULATED_HP = 392
+   MAX_HP = 200
+   MAX_CALCULATED_HP = 491
    MAX_XP = 20000000
    MAX_XP_DEATH_LOSS = 10000
-
+   MAX_MANA = 200
+   MAX_VIGOR = 200
+   
    // First set of flags (in piFlags)
    // A mask of flags that are unaffected by ResetPlayerFlagList
    PFLAG_MASK              = 0x7423D7E
