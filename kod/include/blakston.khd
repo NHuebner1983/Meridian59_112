@@ -2352,7 +2352,7 @@
    // Obviously a lot of work will be needed to make use of these.
    // 300 HP ends at LEVEL_28_HP -- Add more as needed.
    // If you think this is whacky, just remember, sometimes up to 5 or more 
-   // monsters may be in 1 Level
+   // monsters may be in 1 Level, and nobody wants to update 100 monsters by hand.
    
    LEVEL_1_HP = 30
    LEVEL_2_HP = 40
