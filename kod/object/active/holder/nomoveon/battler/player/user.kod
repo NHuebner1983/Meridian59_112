@@ -3303,20 +3303,47 @@ messages:
 
       if IsClass(what,&Monster)
       {
-		if IsClass(poOwner,&SurvivalRoom)
-		{
-			// Survival room specific dots.
-			if Send(poOwner,@IsMiniBoss,#what=self)
-			{
-			   return MM_MINIBOSS;
-			}
-			if Send(poOwner,@IsBoss,#what=self)
-			{
-			   return MM_BOSS;
-			}
-		}
-		
-		return Send(what,@GetMinimapDotFlags,#what=self);
+         if Send(what,@GetMaster) <> $
+         {
+            if (Send(what,@GetMaster) = self)
+            {
+               return MM_MINION_SELF;
+            }
+            else
+            {
+               return MM_MINION_OTHER;
+            }
+         }
+		 
+         if Send(what,@GetBehavior) & AI_NPC
+         {
+            // Draw dots for NPCs.
+            return MM_NPC;
+         }
+		 
+         if IsClass(poOwner,&SurvivalRoom)
+         {
+            // Survival room specific dots.
+            if Send(poOwner,@IsMiniBoss,#what=what)
+            {
+               return MM_MINIBOSS;
+            }
+            if Send(poOwner,@IsBoss,#what=what)
+            {
+               return MM_BOSS;
+            }
+         }
+		 
+		 if (Send(what,@GetTarget) = self)
+		 {
+			return MM_AGGRO_SELF | MM_MONSTER;
+		 }
+		 else if (IsClass(Send(what,@GetTarget), &Player))
+		 {
+			return MM_AGGRO_OTHER | MM_MONSTER;
+		 }
+
+         return MM_MONSTER;
       }
 
       // Not a monster or a player. Ask the object what flags it has.

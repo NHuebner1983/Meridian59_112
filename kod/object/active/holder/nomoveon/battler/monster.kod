@@ -594,31 +594,9 @@ messages:
       propagate;
    }
 
-   GetMinimapDotFlags(what=$)
+   GetCurrentState()
    {
-	 if Send(self,@GetMaster) <> $
-	 {
-		if (Send(self,@GetMaster) = what)
-		{
-		   return MM_MINION_SELF;
-		}
-		else
-		{
-		   return MM_MINION_OTHER;
-		}
-	 }
-	 if Send(self,@GetBehavior) & AI_NPC
-	 {
-		// Draw dots for NPCs.
-		return MM_NPC;
-	 }
-
-	 if viCurrentState = STATE_CHASE OR viCurrentState = STATE_ATTACK
-	 {
-		 return MM_AGGRO_SELF | MM_MONSTER;
-	 }
-	 
-	 return MM_MONSTER;
+	   return viCurrentState;
    }
    
    SetPatrolPath(lPath = $)
