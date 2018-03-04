@@ -118,7 +118,11 @@
    MM_BOSS                 = 0x00000800
    MM_RARE_ITEM            = 0x00001000
    MM_NO_PVP               = 0x00002000
-
+   MM_AGGRO_SELF           = 0x00004000
+   MM_AGGRO_OTHER          = 0x00008000
+   MM_MERCENARY            = 0x00010000
+   
+   
    // Player name color sent as hex RGB value. Define constants
    // for ease of use as needed. Requires OF_PLAYER boolean flag
    // to be set to draw a name.
@@ -127,7 +131,7 @@
    NC_KILLER       = 0xFF0000   // Set if object is a killer.
    NC_OUTLAW       = 0xFC9E00   // Set if object is an outlaw.
    NC_DM           = 0x00FFFF   // Set if object is a DM player.
-   NC_CREATOR      = 0xFFFF00   // Set if object is a creator player.
+   NC_CREATOR      = 0xB300B3   // Set if object is a creator player. Was 0xFFFF00. I like Daenks.
    NC_SUPER        = 0x00FF00   // Set if object is a "super DM".
    NC_MODERATOR    = 0x0078FF   // Set if object is a "moderator".
    NC_EVENTCHAR    = 0xFF00FF   // Set if object is an event character.
@@ -2336,18 +2340,16 @@
    SPELLPOWER_MAXIMUM = 99
 
    // Player flags
-
    PKILL_ENABLE_HP = 100
    MIN_HP = 20
    MAX_HP = 200
    MAX_CALCULATED_HP = 491
-   MAX_XP = 20000000
+   MAX_XP = MAX_HP * 100000
+   MAX_XP_PER_LEVEL = 25000
    MAX_XP_DEATH_LOSS = 10000
    MAX_MANA = 200
    MAX_VIGOR = 200
-
-   // If you change your MAX_HP higher than 150, you must adjust this value to support it.
-   MAX_STAMINA = 100
+   MAX_STAMINA = 50
    
    // These HP levels can be used to replace monster hard-coded values.
    // To give you an idea, Giant Rats would be Level_1_HP and so would a handful of others.
