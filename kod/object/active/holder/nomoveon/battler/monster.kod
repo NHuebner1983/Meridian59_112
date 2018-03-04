@@ -364,7 +364,7 @@ classvars:
    viFaction = FACTION_NEUTRAL
 
    vbIsAreaEffect = FALSE
-
+   
 properties:
 
    piVisionDistance
@@ -492,6 +492,8 @@ properties:
    // 20 seconds default for players, 60 for monsters
    piHurtMeTime = 60000
 
+   viCurrentState = STATE_WAIT
+   
 messages:
 
    Constructor(template=FALSE, color=0, piSurvivalLevel=0, iBrain = 0)
@@ -592,6 +594,33 @@ messages:
       propagate;
    }
 
+   GetMinimapDotFlags(what=$)
+   {
+	 if Send(self,@GetMaster) <> $
+	 {
+		if (Send(self,@GetMaster) = what)
+		{
+		   return MM_MINION_SELF;
+		}
+		else
+		{
+		   return MM_MINION_OTHER;
+		}
+	 }
+	 if Send(self,@GetBehavior) & AI_NPC
+	 {
+		// Draw dots for NPCs.
+		return MM_NPC;
+	 }
+
+	 if viCurrentState = STATE_CHASE OR viCurrentState = STATE_ATTACK
+	 {
+		 return MM_AGGRO_SELF | MM_MONSTER;
+	 }
+	 
+	 return MM_MONSTER;
+   }
+   
    SetPatrolPath(lPath = $)
    {
       if (lPath <> $)
@@ -1004,6 +1033,7 @@ messages:
    {     
       Send(self,@SetState,#bit=STATE_ATTACK);
       Send(self,@ClearBehavior);
+
       if actnow
       {
          Send(self,@AttackTimer);
@@ -5094,7 +5124,7 @@ messages:
       else
       {
          AddPacket(4,rMonster_Condition, 4,vrDesc, 4,monster_desc_level,
-                   4,Bound(viLevel,20,150), 4,Send(self,@GetCapDef),
+                   4,Bound(viLevel,20,MAX_HP), 4,Send(self,@GetCapDef),
                    4,Send(self,@GetName));
       }
 
@@ -5337,6 +5367,8 @@ messages:
 
       piState = piState & STATE_ZERO_MASK;
       piState = piState | bit;
+	  
+	  viCurrentState = bit;
 
       return;
    }
