@@ -3303,36 +3303,20 @@ messages:
 
       if IsClass(what,&Monster)
       {
-         if Send(what,@GetMaster) <> $
-         {
-            if (Send(what,@GetMaster) = self)
-            {
-               return MM_MINION_SELF;
-            }
-            else
-            {
-               return MM_MINION_OTHER;
-            }
-         }
-         if Send(what,@GetBehavior) & AI_NPC
-         {
-            // Draw dots for NPCs.
-            return MM_NPC;
-         }
-         if IsClass(poOwner,&SurvivalRoom)
-         {
-            // Survival room specific dots.
-            if Send(poOwner,@IsMiniBoss,#what=what)
-            {
-               return MM_MINIBOSS;
-            }
-            if Send(poOwner,@IsBoss,#what=what)
-            {
-               return MM_BOSS;
-            }
-         }
-
-         return MM_MONSTER;
+		if IsClass(poOwner,&SurvivalRoom)
+		{
+			// Survival room specific dots.
+			if Send(poOwner,@IsMiniBoss,#what=self)
+			{
+			   return MM_MINIBOSS;
+			}
+			if Send(poOwner,@IsBoss,#what=self)
+			{
+			   return MM_BOSS;
+			}
+		}
+		
+		return Send(what,@GetMinimapDotFlags,#what=self);
       }
 
       // Not a monster or a player. Ask the object what flags it has.
@@ -10797,7 +10781,7 @@ messages:
       // Range Checks, no client hacking negative stats funny business!
       if (might < 1 OR might > 50)
          OR (intellect < 1 OR intellect > 50)
-         OR (stamina < 1 OR stamina > 50)
+         OR (stamina < 1 OR stamina > MAX_STAMINA)
          OR (agility < 1 OR agility > 50)
          OR (mysticism < 1 OR mysticism > 50)
          OR (aim < 1 OR aim > 50)
@@ -10941,7 +10925,7 @@ messages:
          if (iPrimaryStat = STAT_ID_STAMINA)
          {
             if (iSpellAbility > (stamina * 2)) AND (stamina < piStamina)
-               OR (iSpellAbility = 99 AND piStamina = 50 AND stamina < 50)
+               OR (iSpellAbility = 99 AND piStamina = MAX_STAMINA AND stamina < MAX_STAMINA)
             {
                Send(self,@ChangeSpellAbility,#spell_num=iSpellNum,
                      #amount=((piStamina - stamina)
@@ -11008,7 +10992,7 @@ messages:
          else if (iPrimaryStat = STAT_ID_STAMINA)
          {
             if (iSkillAbility > (stamina * 2)) AND (stamina < piStamina)
-               OR (iSkillAbility = 99 AND piStamina = 50 AND stamina < 50)
+               OR (iSkillAbility = 99 AND piStamina = MAX_STAMINA AND stamina < MAX_STAMINA)
             {
                Send(self,@ChangeSkillAbility,#skill_num=iSkillNum,
                      #amount=((piStamina - stamina) * -2));
