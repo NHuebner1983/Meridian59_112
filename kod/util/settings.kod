@@ -28,17 +28,17 @@ properties:
 
    // piMoneyFactor: How much money should be given out?  Raise this number to
    //  increase the amount of money given out.
-   piMoneyFactor = 100
+   piMoneyFactor = 600
 
    // Increase this to increase the number of items dropped from monster deaths.
-   piItemFactor = 100
+   piItemFactor = 400
 
    // Modifier to the chance for items to be generated.
    piMagicItemModifier = 50
 
    // Changed the wait for monsters to spawn.  A decrease means things
    //  spawn faster (less time waiting between spawns).
-   piSpawnRate = 100
+   piSpawnRate = 110
 
    //
    // Player advancement
@@ -68,24 +68,24 @@ properties:
    // DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
    //  this will lower the odds of a dead player losing health and skill/spell
    //  percents.
-   piDefaultDeathCost = 100
+   piDefaultDeathCost = 40
 
    // piAdvancementRate: Determines how fast or slow advancement goes for all
    //  spells and skills.  This is a percent of normal, and only affects the
    //  secondary chance.
-   piAdvancementRate = 100
+   piAdvancementRate = 150
 
    // The training points we grant players each day to reward them for logging on.
-   piLogonBonus = 50
+   piLogonBonus = 500
 
    // The maximum amount of unbound energy we can absorb
-   piUnboundMax = 500
+   piUnboundMax = 1000
 
    // The maximum percentage of XP we can absorb as unbound energy.
    piUnboundAbsorption = 100
 
    // The permillage of unbound energy that is lost every second. 50 means 5 percent.
-   piUnboundDecay = 50
+   piUnboundDecay = 10
 
    // Delay between receiving unbound energy and decay setting in in ms.
    piUnboundDelay = 30000
@@ -98,7 +98,7 @@ properties:
    piMaxLearnPoints = 16
 
    // The default time for building group membership.
-   piDefaultGroupTime = 60000
+   piDefaultGroupTime = 120000
 
    // The maximum HP a player can suicide their character at, without admin
    // help. Prevents people making mistakes in a fit of rage, or suiciding
@@ -124,10 +124,10 @@ properties:
    // Can't cast a teleport spell until this long after attacking someone.  Prevents
    // hit-and-run.  If 0, there's no restriction on when the spell can be cast.
    // Time in seconds.
-   piTeleportAttackDelaySec = 240
+   piTeleportAttackDelaySec = 60
 
    // Rescue always takes at least this long to cast
-   piRescueBaseDelaySec = 5
+   piRescueBaseDelaySec = 2
 
    // If true, spellpower and duration are displayed for all spells cast.
    pbDisplaySpellData = FALSE
@@ -136,10 +136,10 @@ properties:
    pbFrozRechargeOnKill = TRUE
 
    // Spell items cost this much compared to casting the actual spell.
-   piItemManaCostPct = 75
+   piItemManaCostPct = 10
 
    // Can users buff each other in safe zones?
-   pbBuffOthersInSafeZones = FALSE
+   pbBuffOthersInSafeZones = TRUE
 
    //
    // Guild hall settings
@@ -164,7 +164,7 @@ properties:
    //
    
    // Maximum amount of tokens in the movement bucket
-   piMovementBucketMax = 15000000
+   piMovementBucketMax = 20000000
 
    //
    // Penalties
@@ -193,15 +193,15 @@ properties:
    pbLoseXPOnPenalty = TRUE
 
    // Time in milliseconds that ghosts will last before taking a penalty
-   piLogPenGhostTime = 480 * 1000
+   piLogPenGhostTime = 4000 * 1000
 
    // Time in milliseconds that outlaw / murderer ghosts will last
    // before taking a penalty
-   piOutlawMurdererLogPenGhostTime = 180 * 1000
+   piOutlawMurdererLogPenGhostTime = 380 * 1000
 
    // Seconds for which we consider the player 'active' in PvP. This includes
    // attacking or being attacked.
-   piRecentPvPTimeSec = 900
+   piRecentPvPTimeSec = 120
 
    // Booleans for whether we bypass the pen system for players who have not
    // participated in PvP in piRecentPvPTimeSec seconds. White and red handled
@@ -227,7 +227,7 @@ properties:
    piMinHPForJusticar = 100
 
    // Cost for Caramo to change a player's name.
-   piNameChangeCost = 3000000
+   piNameChangeCost = 5000000
 
    // If disabled, outlaws & murderers will not be afforded the 1/3-hp damage cap protection.
    pbDamageCapProtectionMurderersEnable = FALSE
@@ -240,32 +240,32 @@ properties:
    piMonsterMinionLimit = 4
 
    // Minimum swings needed for a chance to improve a weaponcraft skill.
-   piWeaponcraftImprovementMinimumSwings = 50
+   piWeaponcraftImprovementMinimumSwings = 35
    
    // Riija Sword drops on death? (Used to limit griefing)
    pbRiijaSwordDropOnDeath = FALSE
 
    // Replaces old constant
-   piPKillEnableHP = 50
+   piPKillEnableHP = 100
    
    // Replaces old constant
-   piIntrigueEnableHP = 50
+   piIntrigueEnableHP = 100
    
    // If set to true, Resist Rings will lose durability upon taking an appropriate elemental hit.
    piResistRingLoseDurability = TRUE
 
    // Length of hold effect players experience when logging or phasing in
-   piLogonDelay = 2500
+   piLogonDelay = 1500
    
    // Length of time the temporary guardian angel lasts, in minutes
    piTempSafeMinutes = 360
 
    // Revenant speed setting
-   piRevSpeed = 18
+   piRevSpeed = 10
 
    // The divisor for all skill post-softcap imp rates. Higher means harder.
    // One means softcaps don't matter at all.
-   piSkillSoftcapPenalty = 5
+   piSkillSoftcapPenalty = 2
 
    // The divisor for all spell post-softcap imp rates.
    piSpellSoftcapPenalty = 4
@@ -281,10 +281,10 @@ properties:
    piBaseRating = 0
 
    // Percent of mana required/used for broadcasting. Default 0 (no cost).
-   piBroadcastManaPercent = 0
+   piBroadcastManaPercent = 10
 
    // Chance for stormy weather
-   piStormChance = 15
+   piStormChance = 75
 
    // Setting to allow users to remove their own posts.
    pbCanUserRemoveOwnPosts = TRUE
