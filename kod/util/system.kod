@@ -3692,7 +3692,7 @@ messages:
    "Pre-calculate XP amounts. Because we track total XP and use set points "
    "to determine when to gain a HP, precalculate the levels on recreate."
    {
-      local i, iXP, hTable;
+      local i, iAmount, iXP, hTable;
 
       iXP = 0;
 
@@ -3705,7 +3705,19 @@ messages:
       for (i = MIN_HP + 1; i <= MAX_CALCULATED_HP + 1; ++i)
       {
          // Cumulative XP is hp * hp per HP.
-         iXP = iXP + i * i;
+         iAmount = i * i;
+		 
+		 // Prevent multipliers from surpassing MAX_XP_PER_LEVEL
+		 // Example: 180 HP = 33,000 XP
+		 // If MAX_XP_PER_LEVEL = 25,000, it will only be 25,000 XP to do 180 - 181
+		 
+		 if iAmount > MAX_XP_PER_LEVEL
+		 {
+			 iAmount = MAX_XP_PER_LEVEL;
+		 }
+		 
+		 iXp += iAmount;
+		 
          AddTableEntry(phXPTable, i, iXP);
       }
 
@@ -5800,6 +5812,8 @@ messages:
       plItemTemplates = cons(create(&GoldenArrow),plItemTemplates);
 
       // Weapons
+	  
+      plItemTemplates = cons(create(&QorBow),plItemTemplates);
       plItemTemplates = cons(create(&MagicBow),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeBow),plItemTemplates);
       plItemTemplates = cons(create(&Longbow),plItemTemplates);
@@ -7436,7 +7450,7 @@ messages:
       return;
    }
 
-   DistributeBetaPotions(giveHealth=TRUE, maxHP=150, HealthCap=150,
+   DistributeBetaPotions(giveHealth=TRUE, maxHP=200, HealthCap=200,
                          giveSpells=TRUE, maxLevel=6,
                          MaxPotionsPerPlayer=5, deadwood=0, allMax=FALSE)
    {
