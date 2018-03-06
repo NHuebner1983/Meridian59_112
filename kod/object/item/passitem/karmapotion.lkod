@@ -10,5 +10,5 @@ KarmaPotion_neg_desc_rsc = de \
    "Trinkst du diesen Trank w‰hrend einer Frenzy ‰ndert sich dein Karma auf "
    "-100."
 KarmaPotion_drink = de "Du trinkst den Trank mit einem Schluck leer."
-KarmaPotion_no_drink = de \
-   "Du kannst diesen Trank nicht auﬂerhalb einer Frenzy trinken."
+//KarmaPotion_no_drink = de \
+//   "Du kannst diesen Trank nicht auﬂerhalb einer Frenzy trinken."
