@@ -380,13 +380,13 @@ messages:
 
       //// Item Attributed weapons:  each trestype has two values:
       //// a Difficulty Seed which determines the level of itematt
-      //// applied to a weapon, and a chance out of 400 
+      //// applied to a weapon, and a chance out of 400
       //// that a weapatt will appear.
       if vbDropItematt
          AND piDiff_seed > 0
          AND IsClass(who,&User)
       {
-         if Random(1,400) <= (Send(SETTINGS_OBJECT,@GetMagicItemModifier) *
+         if Random(1,50) <= (Send(SETTINGS_OBJECT,@GetMagicItemModifier) *
                                     piItem_Att_chance) / 100 
          {
             oObj = Send(self,@GenerateItemAtt,#who=who,#diff_seed=piDiff_seed);
