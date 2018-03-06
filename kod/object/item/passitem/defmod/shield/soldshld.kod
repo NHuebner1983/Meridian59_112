@@ -119,6 +119,12 @@ messages:
       propagate;
    }
 
+   ReqDMDelete()
+   "Soldier Shields are not deleted with the DM Clear Ability command."
+   {
+      return FALSE;
+   }
+   
    Delete()
    {
       if poOwner <> $ AND IsClass(poOwner,&Player)
