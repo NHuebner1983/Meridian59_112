@@ -81,7 +81,7 @@ classvars:
 properties:
 
    viSpeed = SPEED_FAST
-   viLevel = 150
+   viLevel = LEVEL_18_HP
    viDifficulty = 8
 
    piAnimation = ANIM_NONE
@@ -185,7 +185,7 @@ messages:
       if viSpeed = SPEED_NONE
          AND what <> $
          AND IsClass(what,&Player)
-         AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal))
+         //AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal))
          AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
          AND Send(self,@SquaredDistanceTo,#what=what) <= 49
       {
