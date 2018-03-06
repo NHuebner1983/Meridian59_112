@@ -230,18 +230,23 @@ resources:
    player_haunted_on = "%s%s's violent death summons forth a revenant."
    player_haunted_off = "The revenant is satisfied."
    
-   player_training_inform = "You now have ~B%i~B training points!"
+   player_training_inform = "You now have ~B~s%i~v~B training points."
    player_reached_maxtraining = \
-      "You now have ~B%i~B training points and can not gain any more!  "
+      "You now have ~B~s%i~v~B training points and can not gain any more!  "
       "Cast the Meditate spell and say the name of a spell or skill out loud "
       "to use your points to train it."
-   player_gained_training = "You have gained ~B%i~B training points!"
-   player_spent_training = "You have spent ~B%i~B training points!"
+   player_gained_training = "You have gained ~B~s%i~v~B training points."
+	  
+   player_spent_training = "You have spent ~B~s%i~v~B training points."
    player_logon_bonus = \
-      "You have received your daily training bonus of ~B%i~B points!  "
+      "You have received your daily training bonus of ~B~s%i~v~B points.  "
       "Come back tomorrow for more!"
+   player_logon_bonus_capped = \
+      "You've missed out on receiving ~B~s%i~v~B daily training points.  "
+      "You will not receive the daily bonus unless you have less than ~B~s%i~v~B training points at logon."
    player_experience_gained = "You have gained ~B~s%i~v~B XP."
-   player_experience_lost = "You have lost ~B~r%i~B~v XP!"
+   player_experience_lost = "You have lost ~B~r%i~B~v XP."
+   player_earns_xpbonus_rsc = "Your bravery has earned you an additional ~B~s%i~v~B XP."
 
    player_unbound_energy_gained = "You gather ~B~t%i~v~B unbound energy "
       "from your fallen enemy."
@@ -273,7 +278,7 @@ resources:
    player_hit_anti_immunity = \
       "%s%s%s convulses and seems to be suffering badly."
    
-   player_immune_to_hit = "%sMysteriously, you feel almost no pain!"
+   player_immune_to_hit = "%sMysteriously, you feel almost no pain."
    player_resists_hit = "%sMuch of the pain fades away."
    player_anti_resists_hit = \
       "%sThe pain seems to resonate and grow inside you."
@@ -2414,7 +2419,7 @@ messages:
                #wave_rsc=player_logged_on_wav_rsc);
       }
 
-      // Reward people for logging on by granting them some free training points!
+      // Reward people for logging on by granting them some free training points.
       // We take the absolute value to automatically fix bugs with people
       // mysteriously ending up with a timestamp in the distant future.
       iTimespan = Abs(GetTime() - piReward_timestamp);
@@ -2428,7 +2433,7 @@ messages:
 
       if iTimespan > 16*60*60
       {
-         if piTraining_points >= 1000
+         if piTraining_points >= MAX_TRAINING_POINTS
          {
             return;
          }
@@ -2654,7 +2659,7 @@ messages:
 
       if First(lStats) < 1 OR First(lStats) > 50
          OR Nth(lStats,2) < 1 OR Nth(lStats,2) > 50
-         OR Nth(lStats,3) < 1 OR Nth(lStats,3) > 50
+         OR Nth(lStats,3) < 1 OR Nth(lStats,3) > MAX_STAMINA
          OR Nth(lStats,4) < 1 OR Nth(lStats,4) > 50
          OR Nth(lStats,5) < 1 OR Nth(lStats,5) > 50
          OR Nth(lStats,6) < 1 OR Nth(lStats,6) > 50
@@ -3238,7 +3243,7 @@ messages:
 
       // Bound twice - once for max HP this player can get, once for
       // max HP allowable by the game.
-      return Bound(Bound(piBase_max_health,MIN_HP,100 + iStamina),MIN_HP,MAX_HP);
+      return Bound(Bound(piBase_max_health,MIN_HP,HP_BASE_MAX_ONE_STAMINA + iStamina),MIN_HP,MAX_CALCULATED_HP);
    }
 
    GetUncappedBaseMaxHealth()
@@ -5084,7 +5089,7 @@ messages:
       // Give offensive buffs a small chance to improve each swing!
       foreach i in plPassiveImprovement
       {
-         if Nth(i,3) AND random(1,50) = 50
+         if Nth(i,3) AND random(1,30) = 30
          {
             Send(First(i),@ImproveAbility,#who=self,#target=what);
          }
@@ -7612,7 +7617,7 @@ messages:
 
    GetStamina()
    {
-      return bound((piStamina + piStaminaMod),1,MAXIMUM_STAT);
+      return bound((piStamina + piStaminaMod),1,MAX_STAMINA);
    }
 
    GetMysticism()
@@ -7642,7 +7647,7 @@ messages:
 
    GetRawStamina()
    {
-      return bound(piStamina,1,50);
+      return bound(piStamina,1,MAX_STAMINA);
    }
 
    GetRawMysticism()
@@ -8968,10 +8973,11 @@ messages:
    "stamina, all the way down to half for those with high staminas."
    {
       local i, iMaxHealth, dodgeskill, oSkill, monster_level, iXP, oWeapon,
-            iItemBonus, iUnbound, iDist, iDifference;
+            iItemBonus, iUnbound, iDist, iDifference, iXPNeeded, iXPBonus, iPrevTrainingPoints;
 
       iXP = 0;
       iItemBonus = 0;
+	  iXPBonus = 0;
 
       // Some things just never allow advancement.
       // Can advance in arena if realdeath is on in an arena.
@@ -9003,7 +9009,7 @@ messages:
          {
             foreach i in plPassiveImprovement
             {
-               if Nth(i,2) AND Random(1,5) = 5
+               if Nth(i,2) AND Random(1,4) = 4
                {
                   Send(First(i),@ImproveAbility,#who=self,#target=what);
                }
@@ -9011,7 +9017,22 @@ messages:
          }
 
          iMaxHealth = Send(self,@GetBaseMaxHealth);
+		 
+		 if IsClass(what,&Monster)
+		 {
+			 // Bonus Percent: Player to Monster Health
+			 iXPBonus = (monster_level / iMaxHealth) * XP_BONUS_PERCENT;
 
+			 // Bonus Amount: Player to Monster Health
+			 iXPBonus *= (monster_level - iMaxHealth) / XP_BONUS_DIVISOR;
+		 }
+		 else
+		 {
+			 // Give a very small bonus for killing players.
+			 // This prevents someone from killing a 200 hp character over and over.
+			 iXPBonus = 5;
+		 }
+		 
          // Determine the base amount of XP awarded:
          // Full XP for when the player got the kill and dodged or took damage.
          // 66// XP when the player didn't get the kill (they dodged or took
@@ -9024,9 +9045,9 @@ messages:
             if killing_blow
                AND ((piFlags & PFLAG_TOOK_DAMAGE)
                   OR (piFlags & PFLAG_DODGED))
-            {
-               // Player took damage and landed killing blow
-               iXP = monster_level;
+            {				
+			   // Player took damage and landed killing blow
+			   iXP = monster_level;
 
                // Add any item XP bonuses here. Have to get the kill, and
                // either take damage or dodge to gain bonus XP.
@@ -9046,10 +9067,20 @@ messages:
                      OR killing_blow))
                {
                   iXP = monster_level / 3 * 2;
+				  
+				  if iXPBonus > 0
+				  {
+					  iXPBonus /= XP_GROUP_BONUS_DIVISOR;
+				  }
                }
                else
                {
                   iXP = monster_level / 4;
+				  
+				  if iXPBonus > 0
+				  {
+					  iXPBonus /= XP_GROUP_BONUS_DIVISOR;
+				  }
                }
 
                if group_member_kill
@@ -9059,6 +9090,11 @@ messages:
                   Send(self,@MsgSendUser,#message_rsc=group_experience_rsc,
                         #parm1=Send(group_member,@GetName),
                         #parm2=Send(what,@GetName));
+				  
+				  if iXPBonus > 0
+				  {
+					  iXPBonus /= XP_GROUP_BONUS_DIVISOR;
+				  }
                }
             }
 
@@ -9080,10 +9116,10 @@ messages:
             {
                iXP = monster_level / 10;
             }
-         }
-         else if Random(1,100) < 30 AND killing_blow
+         }    // After you pass the monster's HP, spit on them.
+         else if (iMaxHealth > monster_level OR iMaxHealth >= MAX_HP) AND (killing_blow)
          {
-            // Monster was too easy for player to kill!
+            // You spit on the corpse of your unworthy foe.
             Send(self,@MsgSendUser,#message_rsc=player_spits);
          }
 
@@ -9116,7 +9152,7 @@ messages:
          iXP += iItemBonus;
          // AddXP checks for HP gain and redraws the XP bar.
          // NOTE: iMaxHealth could be wrong after this point.
-         Send(self,@AddXP,#iAmount=iXP);
+         Send(self,@AddXP,#iAmount=iXP,#iXPBonus=iXPBonus);
 
          // Also grant unbound energy for your own kills.
          // Unbound energy allows free spell casts.
@@ -9149,34 +9185,23 @@ messages:
             }
          }
 
+		 iPrevTrainingPoints = piTraining_points;
+		 
          // Here, we work out if the player deserves a training point.
          // They qualify if they got at least one gain point from the monster,
          // and also got the killing blow (no double points from single mobs).
          if iXP > 0
             AND killing_blow
-            AND piTraining_points < 1000
+            AND piTraining_points < MAX_TRAINING_POINTS
          {
-            piTraining_points = piTraining_points + 1
+            piTraining_points = piTraining_points + 25
                + (Send(what,@GetBoostedLevel)
                / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));
-
-            if monster_level > 150
-            {
-               piTraining_points = piTraining_points + 3;
-            }
-            else if monster_level > 120
-            {
-               piTraining_points = piTraining_points + 2;
-            }
-            else if monster_level > 75
-            {
-               ++piTraining_points;
-            }
          }
-
+		 
          // Let the player know how many training points they have, if they
          // either reached the max, or a multiple of 100.
-         if piTraining_points > 999
+         if piTraining_points > MAX_TRAINING_POINTS
          {
             if piInform
             {
@@ -9185,8 +9210,7 @@ messages:
                piInform = FALSE;
             }
          }
-         else if piTraining_points % 100 = 0
-               AND piTraining_points <> 0
+         else if (piTraining_points - iPrevTrainingPoints > 0) AND piTraining_points <> 0
                AND piInform
          {
             Send(self,@MsgSendUser,#message_rsc=player_training_inform,
@@ -9239,12 +9263,15 @@ messages:
 
       bGainHP = FALSE;
 
-      while (Send(self,@GetBaseMaxHealth) < (101 + Send(self,@GetStamina))
-         AND Send(self,@GetXPRemainingForNextLevel) <= 0)
-      {
-         Send(self,@GainBaseMaxHealth,#amount=1);
-         bGainHP = TRUE;
-      }
+	  if Send(self,@GetBaseMaxHealth) < (1 + HP_BASE_MAX_ONE_STAMINA + Send(self,@GetStamina))
+	  {
+         while (Send(self,@GetBaseMaxHealth) < (HP_BASE_MAX_ONE_STAMINA + Send(self,@GetStamina))
+            AND Send(self,@GetXPRemainingForNextLevel) <= 0)
+         {
+            Send(self,@GainBaseMaxHealth,#amount=1);
+            bGainHP = TRUE;
+         }
+	  }
 
       if (bGainHP)
       {
@@ -9254,8 +9281,11 @@ messages:
                   piMax_health,pibase_max_health);
          }
 
-         Send(self,@EvaluatePKStatus);
-
+		 if PKILL_ENABLE_HP <= Send(self,@GetBaseMaxHealth)
+		 {
+			Send(self,@EvaluatePKStatus);
+		 }
+		 
          if pbLogged_on
          {
             Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
@@ -9300,18 +9330,28 @@ messages:
       return piXP_total;
    }
 
-   AddXP(iAmount=0,report=TRUE)
+   AddXP(iAmount=0,iXPBonus=0,report=TRUE)
    "All code that adds or subtracts XP should go through this message. "
    "Handles resource display and toughers."
    {
       local iXPNeeded;
+	  
+	  if iAmount > MAX_XP_PER_KILL
+	  {
+	     iAmount = MAX_XP_PER_KILL;
+	  }
 
+	  if iXPBonus > MAX_XP_PER_KILL
+	  {
+	     iXPBonus = MAX_XP_PER_KILL;
+	  }
+	  
       // Add to total.
-      piXP_total = Bound(piXP_total + iAmount,0,MAX_XP);
+      piXP_total = Bound(piXP_total + iAmount + iXPBonus,0,MAX_XP);
 
       // Get the amount they need for the next HP
       iXPNeeded = Send(SYS,@GetXPForLevel,#iHP=piBase_Max_health + 1);
-
+ 
       // TryGainBaseMaxHealth checks if player can be awarded a hit point.
       if (piXP_total >= iXPNeeded)
       {
@@ -9331,6 +9371,12 @@ messages:
          {
             Send(self,@MsgSendUser,#message_rsc=player_experience_gained,
                   #parm1=iAmount);
+			
+			if iXPBonus > 0
+			{
+		       Send(self,@MsgSendUser,#message_rsc=player_earns_xpbonus_rsc,
+			      #parm1=iXPBonus);
+			}
          }
          else if iAmount < 0
          {
@@ -9432,15 +9478,15 @@ messages:
 
       if bCap
       {
-         if piTraining_points <= 1000
+         if piTraining_points <= MAX_TRAINING_POINTS
          {
-            points = bound(points,-piTraining_points,1000 - piTraining_points);
+            points = bound(points,-piTraining_points,MAX_TRAINING_POINTS - piTraining_points);
          }
          else if points > 0
          {
-               // We're respecting the 1000 point cap, have more than 1000
-               // points and are trying to add more. Don't add the points,
-               // return out.
+               // We're respecting the max point point cap. If you have more than 
+			   // MAX_TRAINING_POINTS and are trying to add more. Don't add the points.
+			   
                return;
          }
       }
@@ -9459,7 +9505,7 @@ messages:
 
       piTraining_points = piTraining_points + points;
 
-      if piTraining_points < 1000
+      if piTraining_points < MAX_TRAINING_POINTS
          OR NOT bCap
       {
          piInform = TRUE;
@@ -9482,8 +9528,12 @@ messages:
 
       ptReward_timer = CreateTimer(self,@GetDailyTrainingReward,24*60*60*1000);
 
-      if piTraining_points >= 1000
+      if piTraining_points >= MAX_TRAINING_POINTS_STOP_DAILY_BONUS
       {
+		 Send(self,@MsgSendUser,#message_rsc=player_logon_bonus_capped,
+		    #parm1=iBonus,
+			#parm2=MAX_TRAINING_POINTS_STOP_DAILY_BONUS);
+			
          return;
       }
 
@@ -9897,7 +9947,7 @@ messages:
             iXPLoss = Send(SYS,@GetXPDiffForLevel,#iLevel=piBase_max_health);
             // Lose piDeathCost// of 20// of current level XP.
             iXPLoss = Bound((iXPLoss * piDeathCost) / 500,0,MAX_XP_DEATH_LOSS);
-            Send(self,@AddXP,#iAmount=-iXPLoss);
+            Send(self,@AddXP,#iAmount=-iXPLoss,#iXPBonus=0);
 
             // Under 100HP and killed by a player? Receive a temporary angel.
             if bTempSafe
@@ -11662,7 +11712,7 @@ messages:
 
       if NOT bAbsolute
       {
-         piStaminaMod = Bound(piStaminaMod,-piStamina,(MAXIMUM_STAT-piStamina));
+         piStaminaMod = Bound(piStaminaMod,-piStamina,(MAX_STAMINA-piStamina));
       }
 
       iNewMaxHP = Send(self,@GetBaseMaxHealth);
