@@ -41,7 +41,7 @@ resources:
    vrKocName = XeoAcid_koc_name_rsc
 
    viAttack_type = ATCK_WEAP_MAGIC
-   viLevel = 150
+   viLevel = LEVEL_28_HP
    viDifficulty = 7
    viSpeed = SPEED_VERY_FAST
    vrSound_aware = XeoAcid_sound_aware
