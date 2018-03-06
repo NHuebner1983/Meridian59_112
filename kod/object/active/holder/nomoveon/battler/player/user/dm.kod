@@ -29,6 +29,8 @@ resources:
    dm_mortal = "You are mortal."
    dm_immortal = "You are immortal."
 
+   dm_event_qormas = "You begin Qormas in the land of Meridian."
+   
    dm_teleportto = \
       "A dimensional gate appears next to you, and %s steps through."
    dm_teleportfrom = \
@@ -55,6 +57,9 @@ resources:
    dm_makesignetfail = "You were unable to create a signet ring at this time."
 
    // Commands
+   dm_event_qormas_start_command = "start qormas"
+   dm_event_qormas_end_command = "end qormas"
+   
    dm_makemonster = "monster"
    dm_event_sign_command = "event sign"
    dm_makeitem = "item"
@@ -1151,6 +1156,10 @@ messages:
          AND NOT StringContain(string,dm_monster_authorize_command)
       {
          Send(self,@DMSayMakeMonster,#string=string);
+         Send(self,@DMSayMakeMonster,#string=string);
+         Send(self,@DMSayMakeMonster,#string=string);
+         Send(self,@DMSayMakeMonster,#string=string);
+         Send(self,@DMSayMakeMonster,#string=string);
 
          return;
       }
@@ -1244,28 +1253,41 @@ messages:
          }
       }
 
+	  if (piDMFlags)
+         AND StringEqual(string,dm_event_qormas_start_command)
+      {
+		 Send(EVENTENGINE_OBJECT,@EventStart,#parm1=&Qormas);
+	  }
+	  
+      if (piDMFlags)
+         AND StringEqual(string,dm_event_qormas_end_command)
+      {
+		 Send(EVENTENGINE_OBJECT,@EventEnd,#parm1=&Qormas);
+	  }
+	  
       // Boost stats to max, boost hp/XP/mana.
       if (piDMFlags & DMFLAG_ALLOW_BOOST_STATS)
          AND StringEqual(string,dm_boost_stats_command)
       {
          piMight = 50;
          piIntellect = 50;
-         piStamina = 50;
+         piStamina = MAX_STAMINA;
          piAgility = 50;
          piMysticism = 50;
          piAim = 50;
 
          piMightMod = 20;
          piIntellectMod = 20;
-         piStaminaMod = 20;
+         piStaminaMod = 0;
          piAgilityMod = 20;
          piMysticismMod = 20;
          piAimMod = 20;
 
          piVigor = 200;
-         Send(self,@GainBaseMaxHealth,#amount=150-piBase_max_health);
+		 
+         Send(self,@GainBaseMaxHealth,#amount=MAX_CALCULATED_HP);
          Send(self,@ResetXPToLevel);
-         Send(self,@NewMaxMana,#amount=200-piMax_mana);
+         Send(self,@NewMaxMana,#amount=MAX_MANA-piMax_mana);
 
          if Send(self,@CheckLog)
          {
@@ -1273,9 +1295,9 @@ messages:
                   piBase_max_health,piMax_health);
          }
 
-         Send(self,@GainHealth,#amount=piMax_health*100-piHealth,#precision=TRUE);
+         Send(self,@GainHealth,#amount=MAX_CALCULATED_HP,#precision=TRUE);
          Send(self,@GainMana,#amount=piMax_mana-piMana);
-         Send(self,@EvaluatePKStatus);
+		 Send(self,@EvaluatePKStatus);
          Send(self,@PlayerIsIntriguing);
          Send(self,@NewVigor);
 
@@ -1463,7 +1485,7 @@ messages:
          }
       }
 
-      if (piDMFlags & DMFLAG_ALLOW_SET_MORTAL)
+      if piDMFlags //& DMFLAG_ALLOW_SET_MORTAL// 
       {
          if StringEqual(string,dm_mortal_command)
          {
