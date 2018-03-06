@@ -32,14 +32,14 @@ resources:
 	QorBow_desc_rsc = \
 	   "A foul stinch emits from a bloody handprint which can "
 	   "only be described as the remnants of Queen Venya'cyr. "
-	   "Enscribed are the words ''from death I shall rise again''."
+	   "Enscribed are the words ''from death shall I rise again''."
 	QorBow_not_evil_enough = \
-	   "You feel Queen Venya'cyr feeding off of your soul "
+	   "You feel Queen Venya'cyr feeding off your soul "
 	   "as you attempt to weild this powerful bow."
 	QorBow_explodes = \
-	   "The qor bow explodes into a splash of acid."
+	   "The qor bow explodes into a splash of acid!"
 	QorBow_evil_obtained = \
-	   "Your veigns begin to fill with the blood of Queen Venya'cyr."
+	   "Your veigns fill with the blood of Queen Venya'cyr."
 	   
 classvars:
 
