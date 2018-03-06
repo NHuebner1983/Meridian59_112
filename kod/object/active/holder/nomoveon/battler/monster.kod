@@ -5072,7 +5072,7 @@ messages:
          else
          {
             AddPacket(4,vrCondition_healthy, 4,vrDesc, 4,monster_desc_level,
-                      4,Bound(viLevel,20,MAX_HP));
+                      4,Bound(viLevel,20,MAX_MONSTER_HP));
          }
 
          return;
@@ -5102,7 +5102,7 @@ messages:
       else
       {
          AddPacket(4,rMonster_Condition, 4,vrDesc, 4,monster_desc_level,
-                   4,Bound(viLevel,20,MAX_HP), 4,Send(self,@GetCapDef),
+                   4,Bound(viLevel,20,MAX_MONSTER_HP), 4,Send(self,@GetCapDef),
                    4,Send(self,@GetName));
       }
 
@@ -6089,7 +6089,7 @@ messages:
             corpse = $;
          }
 
-         oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount + (piBoostedLevel
+         oMoney = Create(&Money,#corpse=corpse,#number=(iRandomCashAmount * MONEY_AMOUNT_DROP_MULTRIPLIER) + MONEY_DROP_EXTRA + (piBoostedLevel
                      * Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalCash)));
 
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
@@ -6098,14 +6098,14 @@ messages:
 
       // Add one set of spell reagents to the treasure for each type of spell 
       // that was cast on the monster.
-      /* foreach i in plSpellList
+      foreach i in plSpellList
       {
          foreach j in Send(Send(SYS,@FindSpellByNum,#num=i),@GetReagents)
          {
             oReagent = Create(First(j),#corpse=corpse,#number=Nth(j,2));
             lTreasureItems = Cons(oReagent,lTreasureItems);
          }
-      }*/
+      }
 
       iNumberOfItemsDropped = 0;
       iNumberOfItemsLooted = 0;
