@@ -1,0 +1,11 @@
+QorBow_name_rsc = de "qor bow"
+QorBow_desc_rsc = de \
+   "A foul stinch emits from a bloody handprint which can "
+   "only be described as the hand of Queen Venya'cyr. "
+   "Enscribed along the bow are the words: ''from death I shall rise''."
+QorBow_not_evil_enough = de \
+   "You feel the hand of Queen Venya'cyr squeezing your soul. You are not worthy."
+QorBow_explodes = de \
+   "The qor bow explodes into a splash of acid."
+QorBow_evil_obtained = de \
+   "Your veigns begin fill with the blood of Queen Venya'cyr."
