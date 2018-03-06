@@ -20,7 +20,9 @@ REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 REM %                   Optional M59 OgreClient Bin (KODers)                     %
 REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	SET "M59_OGRE_BIN=%M59_DRIVE%:\%M59_FOLDER%\_OgreClient\Meridian59.Ogre.Client\bin"
+	SET "M59_OGRE_BASE=%M59_DRIVE%:\%M59_FOLDER%\_OgreClient"
+	SET "M59_OGRE_BIN=%M59_OGRE_BASE%\Meridian59.Ogre.Client\bin"
+	SET "M59_OGRE_RESOURCES=%M59_OGRE_BASE%\Resources"
 
 
 
@@ -58,8 +60,10 @@ IF NOT EXIST "%M59_DRIVE%:\%M59_FOLDER%" (
 
 IF NOT EXIST "%M59_OGRE_BIN%" (
 	ECHO Notice: M59 Ogre Bin was not found. When you want your RSB strings updated to your client, be sure to update this path.
-	pause
-	exit
+)
+
+IF NOT EXIST "%M59_OGRE_RESOURCES%" (
+	ECHO Notice: M59 Ogre Resources was not found. When you want your RSB strings to load when debugging in Visual Studio, you might want to fix this.
 )
 
 echo Your directories are setup correctly.
@@ -90,6 +94,13 @@ echo If you're satisfied, press any key to close this window.
 		IF EXIST "%M59_OGRE_BIN%\x64\resources\strings" (
 			echo Destination: %M59_OGRE_BIN%\x64\resources\strings\
 			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc*.rsb" "%M59_OGRE_BIN%\x64\resources\strings\"
+		)
+	)
+
+	IF EXIST "%M59_OGRE_RESOURCES%" (
+		IF EXIST "%M59_OGRE_RESOURCES%\strings" (
+			echo Destination: %M59_OGRE_RESOURCES%\strings\
+			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc*.rsb" "%M59_OGRE_RESOURCES%\strings\"
 		)
 	)
 
