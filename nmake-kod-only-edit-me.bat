@@ -1,6 +1,15 @@
 echo off
 
 REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+REM %                     Your Meridian 59 Server Number                         %
+REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	REM :::   Include the dash in front of the number   :::
+	REM ::: or your RSB file will be called rsb0000.rsb :::
+	
+	SET "SERVER_NUMBER=-115"
+	
+REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 REM %        Configure your current Visual Studio vcvarsall.bat location         %
 REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -89,18 +98,18 @@ echo If you're satisfied, press any key to close this window.
 	IF EXIST "%M59_OGRE_BIN%" (
 		IF EXIST "%M59_OGRE_BIN%\x86\resources\strings" (
 			echo Destination: %M59_OGRE_BIN%\x86\resources\strings\
-			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc*.rsb" "%M59_OGRE_BIN%\x86\resources\strings\"
+			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc0000.rsb" "%M59_OGRE_BIN%\x86\resources\strings\rsc0000%SERVER_NUMBER%.rsb"
 		)
 		IF EXIST "%M59_OGRE_BIN%\x64\resources\strings" (
 			echo Destination: %M59_OGRE_BIN%\x64\resources\strings\
-			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc*.rsb" "%M59_OGRE_BIN%\x64\resources\strings\"
+			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc0000.rsb" "%M59_OGRE_BIN%\x64\resources\strings\rsc0000%SERVER_NUMBER%.rsb"
 		)
 	)
 
 	IF EXIST "%M59_OGRE_RESOURCES%" (
 		IF EXIST "%M59_OGRE_RESOURCES%\strings" (
 			echo Destination: %M59_OGRE_RESOURCES%\strings\
-			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc*.rsb" "%M59_OGRE_RESOURCES%\strings\"
+			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc0000.rsb" "%M59_OGRE_RESOURCES%\strings\rsc0000%SERVER_NUMBER%.rsb"
 		)
 	)
 
