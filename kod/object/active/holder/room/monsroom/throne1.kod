@@ -42,11 +42,14 @@ properties:
 
    piOutside_factor = OUTDOORS_NONE
 
+   // Reset room in 20 seconds
+   piReload_Wait_Time = 20000
+
 messages:
 
    Constructed()
    {
-      plMonsters = [ [&TuskedSkeleton, 100] ];
+      plMonsters = [ [&TuskedSkeleton, 99], [&DaemonSkeleton, 1] ];
 
       plGenerators = [ [5, 3], [9, 2], [13, 3],
                        [5, 9], [9, 10], [13, 9]];

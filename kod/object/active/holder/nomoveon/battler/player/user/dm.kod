@@ -1179,7 +1179,7 @@ messages:
       {
          foreach i in plActive
          {
-            if Send(i,@ReqDMDelete)
+            if Send(i,@ReqDMDelete) AND NOT Send(i,@InUse)
             {
                Send(i,@Delete);
             }
@@ -1187,7 +1187,7 @@ messages:
 
          foreach i in plPassive
          {
-            if Send(i,@ReqDMDelete)
+            if Send(i,@ReqDMDelete) AND NOT Send(i,@InUse)
             {
                Send(i,@Delete);
             }
@@ -1278,14 +1278,14 @@ messages:
 
          piMightMod = 20;
          piIntellectMod = 20;
-         piStaminaMod = 0;
+         piStaminaMod = 20;
          piAgilityMod = 20;
          piMysticismMod = 20;
          piAimMod = 20;
 
          piVigor = 200;
 		 
-         Send(self,@GainBaseMaxHealth,#amount=MAX_CALCULATED_HP);
+         Send(self,@GainBaseMaxHealth,#amount=MAX_HP);
          Send(self,@ResetXPToLevel);
          Send(self,@NewMaxMana,#amount=MAX_MANA-piMax_mana);
 
@@ -1295,7 +1295,7 @@ messages:
                   piBase_max_health,piMax_health);
          }
 
-         Send(self,@GainHealth,#amount=MAX_CALCULATED_HP,#precision=TRUE);
+         Send(self,@GainHealth,#amount=MAX_HP,#precision=TRUE);
          Send(self,@GainMana,#amount=piMax_mana-piMana);
 		 Send(self,@EvaluatePKStatus);
          Send(self,@PlayerIsIntriguing);

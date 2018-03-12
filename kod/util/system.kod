@@ -2317,8 +2317,12 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_COR_INN,#class=&CorInn);
       Send(self,@CreateOneRoomIfNew,#num=RID_COR_WEAPONSMASTER,#class=&CorWeaponsMaster);
       Send(self,@CreateOneRoomIfNew,#num=RID_COR_TAILOR,#class=&CorTailor);
-      Send(self,@CreateOneRoomIfNew,#num=RID_COR_UNIV,#class=&CornothUniversity);
       Send(self,@CreateOneRoomIfNew,#num=RID_FORGOTTEN_TOO,#class=&ForgottenToo);
+      Send(self,@CreateOneRoomIfNew,#num=RID_COR_UNIV,#class=&CorNothUniversity);
+      Send(self,@CreateOneRoomIfNew,#num=RID_COR_GEN_HALL,#class=&CorNothGenHall);
+      Send(self,@CreateOneRoomIfNew,#num=RID_COR_MUSEUM,#class=&CorNothMuseum);
+      Send(self,@CreateOneRoomIfNew,#num=RID_OLD_CORNOTH,#class=&OldCorNoth);
+      Send(self,@CreateOneRoomIfNew,#num=RID_OLD_COR_UNIV,#class=&OldCorNothUniversity);
 
       // Jasper stuff
       Send(self,@CreateOneRoomIfNew,#num=RID_JASPER,#class=&Jasper);
@@ -5831,6 +5835,7 @@ messages:
       plItemTemplates = cons(create(&ShortSword),plItemTemplates);
       plItemTemplates = cons(create(&Axe),plItemTemplates);
       plItemTemplates = cons(create(&Hammer),plItemTemplates);
+      plItemTemplates = cons(create(&HolyHammer),plItemTemplates);
       plItemTemplates = cons(create(&Mace),plItemTemplates);
 
       plItemTemplates = cons(create(&ShieldRod),plItemTemplates);

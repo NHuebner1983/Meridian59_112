@@ -139,6 +139,10 @@ properties:
    // Support for players, monsters, and items
    plRadiusEnchantments = $
 
+   piUsed = 0
+   
+   pbIn_use = FALSE
+   
 messages:
 
    Constructor(corpse=$, oDMCreator=$)
@@ -1576,7 +1580,7 @@ messages:
    }
 
    ReqDMDelete()
-   "Will this item be deleted by a DM Clear Inventory command?"
+   "By default this item can be removed."
    {
       return TRUE;
    }
@@ -2699,5 +2703,10 @@ messages:
       return;
    }
 
+   InUse()
+   {
+	   return (piUsed = 1 OR pbIn_use);
+   }
+   
 end
 ////////////////////////////////////////////////////////////////////////////////

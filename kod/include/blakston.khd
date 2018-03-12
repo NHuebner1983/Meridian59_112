@@ -485,7 +485,8 @@
    RID_TOS_OLD_TAVERN = 76
    RID_TOS_STORAGE = 77
    RID_TOS_SMUGGLERS_WAY = 78
-
+   RID_TOS_DEATH_ARENA = 79
+   
    // Barloque 100-149
    RID_BAR_NORTH = 101
    RID_BAR_SOUTH = 102
@@ -514,8 +515,10 @@
    RID_COR_WEAPONSMASTER = 154
    RID_COR_MASTER = 154
    RID_COR_TAILOR = 155
-   RID_COR_UNIV = 156
-
+   RID_COR_GEN_HALL = 156
+   RID_COR_UNIV = 157
+   RID_COR_MUSEUM = 158
+   
    // Marion 200-249
    RID_MARION = 200
    RID_MAR_SMITHY = 201
@@ -910,7 +913,9 @@
    RID_OLD_MARION = 9001
    RID_OLD_BAR_NORTH = 9002
    RID_OLD_BAR_SOUTH = 9003
-  
+   RID_OLD_CORNOTH = 9004
+   RID_OLD_COR_UNIV = 9005
+   
    // Survival Rooms 9500 - 9999
    RID_SURVIVAL_START = 9500
    RID_SURVIVAL_END = 9999
@@ -2353,6 +2358,9 @@
    MAX_HP = 200
    MAX_STAMINA = 50
    
+   // Should be higher to allow for gifts/boons
+   MAX_CALCULATED_HP = 300
+
    // Original value: 100 (MAX_HP would need to be set to 150 if you set this to 100)
    // 150 = allows a player with 1 stamina to go to 150
    // 150 = allows a player with 50 stamina to go to 200
@@ -2360,28 +2368,24 @@
    // 100 = allows a player with 50 stamina to go to 150
    HP_BASE_MAX_ONE_STAMINA = 150
    
-   // Max XP Per Level will prevent the XP needed to advanced to the next HP from being higher
-   // than this value.
+   // Max XP Per Level will cap XP required for each HP.
+   // Cap is reached by 158 HP
    MAX_XP_PER_LEVEL = 25000
    
    // Max XP assumes no more than MAX_XP_PER_LEVEL.
-   MAX_XP = MAX_HP * MAX_XP_PER_LEVEL
+   MAX_XP = 5000000
    
    // If the player somehow manages to kill a very tough monster
    // we will capt the MAX_XP_PER_KILL at the MAX_XP_PER_LEVEL x 2.
    // Prevents the player from being level 20 to level 100 in one kill.
-   MAX_XP_PER_KILL = MAX_XP_PER_LEVEL * 2
+   MAX_XP_PER_KILL = 50000
    
    // Max XP lost on death
    MAX_XP_DEATH_LOSS = 10000
    
-   // This allows for special items / spells / effects which boost your HP past CAP.
-   // Set this HIGHER than MAX_HP.
-   MAX_CALCULATED_HP = 250
-   
    // Maximum amount of HP any monster can have
    // Even if the Monster's KOD is set above it.
-   MAX_MONSTER_HP = (MAX_STAMINA + HP_BASE_MAX_ONE_STAMINA) + MAX_CALCULATED_HP
+   MAX_MONSTER_HP = 1000
    
    // Percent of Player Health divided by Monster Health 
    // Multiplied by the Player's Health
@@ -2410,6 +2414,15 @@
    // training points per kill.
    MAX_TRAINING_POINTS_PER_KILL = 2500
    
+   // Training Points to award before reaching the base HP (150)
+   TP_ALWAYS_AWARD_PER_KILL = 25
+   
+   // Training Points to award between base HP and Player's Max Stamina HP
+   TP_ADDITIONAL_ABOVE_BASE_HP = 25
+   
+   // Training Points to award after Player's Stamina Max HP
+   TP_ADDITIONAL_ABOVE_MAXED_HP = 50
+   
    // These HP levels can be used to replace monster hard-coded values.
    // To give you an idea, Giant Rats would be Level_1_HP and so would a handful of others.
    // If you decided you wanted rats to take you to 35, just change LEVEL_1_HP to 35.
@@ -2418,33 +2431,34 @@
    // If you think this is whacky, just remember, sometimes up to 5 or more 
    // monsters may be in 1 Level, and nobody wants to update 100 monsters by hand.
    
-   LEVEL_1_HP = 30
-   LEVEL_2_HP = 40
-   LEVEL_3_HP = 50
-   LEVEL_4_HP = 60
-   LEVEL_5_HP = 70
-   LEVEL_6_HP = 80
-   LEVEL_7_HP = 90
+   LEVEL_0_HP = 20
+   LEVEL_1_HP = 35
+   LEVEL_2_HP = 45
+   LEVEL_3_HP = 55
+   LEVEL_4_HP = 65
+   LEVEL_5_HP = 75
+   LEVEL_6_HP = 85
+   LEVEL_7_HP = 95
    LEVEL_8_HP = 100
    LEVEL_9_HP = 110
-   LEVEL_10_HP = 120
-   LEVEL_11_HP = 130
-   LEVEL_12_HP = 140
-   LEVEL_13_HP = 150
-   LEVEL_14_HP = 160
-   LEVEL_15_HP = 170
-   LEVEL_16_HP = 180
-   LEVEL_17_HP = 190
+   LEVEL_10_HP = 125
+   LEVEL_11_HP = 135
+   LEVEL_12_HP = 145
+   LEVEL_13_HP = 155
+   LEVEL_14_HP = 165
+   LEVEL_15_HP = 175
+   LEVEL_16_HP = 185
+   LEVEL_17_HP = 195
    LEVEL_18_HP = 200
    LEVEL_19_HP = 210
-   LEVEL_20_HP = 220
-   LEVEL_21_HP = 230
-   LEVEL_22_HP = 240
-   LEVEL_23_HP = 250
-   LEVEL_24_HP = 260
-   LEVEL_25_HP = 270
-   LEVEL_26_HP = 280
-   LEVEL_27_HP = 290
+   LEVEL_20_HP = 225
+   LEVEL_21_HP = 235
+   LEVEL_22_HP = 245
+   LEVEL_23_HP = 255
+   LEVEL_24_HP = 265
+   LEVEL_25_HP = 275
+   LEVEL_26_HP = 285
+   LEVEL_27_HP = 295
    LEVEL_28_HP = 300
    
    // First set of flags (in piFlags)
