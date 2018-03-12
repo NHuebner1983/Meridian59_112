@@ -14,7 +14,6 @@ REM %        Configure your current Visual Studio vcvarsall.bat location        
 REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	SET "VISUAL_STUDIO_DRIVE=D"
-
 	SET "VCVBAT=%VISUAL_STUDIO_DRIVE%:\Visual Studio 2015\VC\vcvarsall.bat"
 
 REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,27 +21,20 @@ REM % Configure your Development Meridian 59 Drive, Directory and OgreClient Bin
 REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	SET "M59_DRIVE=D"
-
 	SET "M59_FOLDER=Meridian59"
+    SET "M59_FULL_PATH=%M59_DRIVE%:\%M59_FOLDER%"
 
 REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 REM %                   Optional M59 OgreClient Bin (KODers)                     %
 REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	SET "M59_OGRE_BASE=%M59_DRIVE%:\%M59_FOLDER%\_OgreClient"
+	SET "M59_OGRE_BASE=%M59_FULL_PATH%\_OgreClient"
 	SET "M59_OGRE_BIN=%M59_OGRE_BASE%\Meridian59.Ogre.Client\bin"
 	SET "M59_OGRE_RESOURCES=%M59_OGRE_BASE%\Resources"
-
-
-
 
 REM ###########################################################################
 REM #         You shouldn't have to touch anything below this line            #
 REM ###########################################################################
-
-
-
-
 
 SET "EDIT_VERBIAGE=Edit this script and try again."
 
@@ -61,8 +53,8 @@ IF NOT EXIST "%M59_DRIVE%": (
 	pause
 	exit
 )
-IF NOT EXIST "%M59_DRIVE%:\%M59_FOLDER%" (
-	ECHO The folder %M59_DRIVE%:\%M59_FOLDER% does not exist. %EDIT_VERBIAGE%
+IF NOT EXIST "%M59_FULL_PATH%" (
+	ECHO The folder %M59_FULL_PATH% does not exist. %EDIT_VERBIAGE%
 	pause
 	exit
 )
@@ -97,18 +89,18 @@ echo If you're satisfied, press any key to close this window.
 	IF EXIST "%M59_OGRE_BIN%" (
 		IF EXIST "%M59_OGRE_BIN%\x86\resources\strings" (
 			echo Destination: %M59_OGRE_BIN%\x86\resources\strings\
-			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc0000.rsb" "%M59_OGRE_BIN%\x86\resources\strings\rsc0000%SERVER_NUMBER%.rsb"
+			copy /Y "%M59_FULL_PATH%\run\server\rsc\rsc0000.rsb" "%M59_OGRE_BIN%\x86\resources\strings\rsc0000%SERVER_NUMBER%.rsb"
 		)
 		IF EXIST "%M59_OGRE_BIN%\x64\resources\strings" (
 			echo Destination: %M59_OGRE_BIN%\x64\resources\strings\
-			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc0000.rsb" "%M59_OGRE_BIN%\x64\resources\strings\rsc0000%SERVER_NUMBER%.rsb"
+			copy /Y "%M59_FULL_PATH%\run\server\rsc\rsc0000.rsb" "%M59_OGRE_BIN%\x64\resources\strings\rsc0000%SERVER_NUMBER%.rsb"
 		)
 	)
 
 	IF EXIST "%M59_OGRE_RESOURCES%" (
 		IF EXIST "%M59_OGRE_RESOURCES%\strings" (
 			echo Destination: %M59_OGRE_RESOURCES%\strings\
-			copy /Y "%M59_DRIVE%:\%M59_FOLDER%\run\server\rsc\rsc0000.rsb" "%M59_OGRE_RESOURCES%\strings\rsc0000%SERVER_NUMBER%.rsb"
+			copy /Y "%M59_FULL_PATH%\run\server\rsc\rsc0000.rsb" "%M59_OGRE_RESOURCES%\strings\rsc0000%SERVER_NUMBER%.rsb"
 		)
 	)
 
