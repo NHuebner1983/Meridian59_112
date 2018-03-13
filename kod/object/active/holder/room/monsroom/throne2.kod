@@ -15,7 +15,7 @@ constants:
    include blakston.khd
 
    // Delay before ghost pops again automatically.  About two minutes (in seconds).
-   GHOST_CYCLE = 120
+   GHOST_CYCLE = 20
 
 resources:
 
@@ -179,6 +179,22 @@ messages:
       return;
    }
 
+   SomethingKilled(what=$,victim=$)
+   {
+		if oGhostPortal <> $
+		{
+			Send(oGhostPortal, @Delete);
+		}
+		
+		oGhostPortal = Create(&Portal,#dest_room_num=RID_FIELD1,#dest_row=42,#dest_col=15,
+		#dest_fine_row=32, #dest_fine_col=32);
+
+		Send(self,@NewHold,#what=oGhostPortal,#new_row=3, #new_col=1,
+		#fine_row=58,#fine_col=18,#new_angle=ANGLE_EAST);
+		
+		propagate;
+   }
+   
    Delete()
    {
       if ptGhost <> $
@@ -189,6 +205,6 @@ messages:
 
       propagate;
    }
-
+   
 end
 ////////////////////////////////////////////////////////////////////////////////

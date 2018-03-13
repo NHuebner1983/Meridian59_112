@@ -1180,7 +1180,7 @@ messages:
       {
          foreach i in plActive
          {
-            if Send(i,@ReqDMDelete) AND NOT Send(i,@InUse)
+            if Send(i,@ReqDMDelete) AND NOT Send(i,@InUse) AND NOT Send(i,@IsColored)
             {
                Send(i,@Delete);
             }
@@ -1188,7 +1188,7 @@ messages:
 
          foreach i in plPassive
          {
-            if Send(i,@ReqDMDelete) AND NOT Send(i,@InUse)
+            if Send(i,@ReqDMDelete) AND NOT Send(i,@InUse) AND NOT Send(i,@IsColored)
             {
                Send(i,@Delete);
             }
@@ -2686,7 +2686,7 @@ messages:
          Send(self,@GetOneOfEach,#type=ITEMTYPE_ROBE,#school=SS_SHALILLE);
          Send(self,@GetOneOfEach,#type=ITEMTYPE_ROBE,#school=SS_RIIJA);
       }
-      if StringEqual(string,dm_get_misc_command)
+	  else if StringEqual(string,dm_get_misc_command)
       {
          Send(self,@GetOneOfEach,#type=ITEMTYPE_MISC);
       }
