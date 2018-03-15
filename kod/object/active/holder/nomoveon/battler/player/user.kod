@@ -1078,10 +1078,17 @@ messages:
    {
       local iTime, iRecent;
 
+	  if piFlags & PFLAG_MURDERER
+      {
+	      return TRUE;
+      }
+
       iTime = GetTime();
       iRecent = iTime - Send(SETTINGS_OBJECT,@GetRecentPvPTime);
 
-      return (piTimeAttackedByPlayer > iRecent OR piTimeAttackedPlayer > iRecent);
+      // You should only be flagged for PVP if you have attacked someone.
+	  return piTimeAttackedPlayer > iRecent;
+      //return (piTimeAttackedByPlayer > iRecent OR piTimeAttackedPlayer > iRecent);
    }
 
    DecayLogoffPenaltyCount()
@@ -1127,6 +1134,29 @@ messages:
       local iPenCount, iEquivDeath, iPointLoss, iItemLoss, oDrop,
             iXPLoss, iNumItems, iNumSpellPts, iNumSkillPts, oSoldierShield;
 
+	  // If you are a recent PVP Combatant, you will die instead of penalty.
+	  if Send(SETTINGS_OBJECT,@PVPDeathOnPenalty) AND Send(self,@IsRecentPvPCombatant)
+      {
+		  Send(self,@Killed,#what=self);
+		  Send(self,@SomethingKilled,
+		      #what=self,#victim=self);
+
+		  // Apply death penalties
+		  Send(self,@ApplyDeathPenalties);
+		  
+		  // Teleport to the Underworld.
+		  Send(self,@UserGotoDeadRoom);
+
+          // Reset logoff penalty for taking death
+          Send(self,@ResetLogoffPenaltyTime);
+		  
+		  // Reset the last player who attacked us and we attacked.
+		  // This will allow us to be out of PVP Mode.
+		  Send(self,@ResetLastPlayerAttackTime);
+
+		  return;
+	  }
+
       // Check if we're eligible for a free pen.
       if (Send(SETTINGS_OBJECT,@GetFreeNoPvPPenActive,
                #flag=piFlags & PFLAG_MURDERER)
@@ -1144,7 +1174,7 @@ messages:
 
          return;
       }
-
+	  
       // Add the penalty for repeat logging to the number of recent kills.
       iPenCount = (Send(self,@GetLogoffPenaltyCount)
                        + Send(self,@GetDecayedUnjustifiedKills));
