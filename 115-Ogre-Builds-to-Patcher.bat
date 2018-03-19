@@ -17,6 +17,7 @@ REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	SET "M59_OGRE_BIN=%M59_OGRE_BASE%\Meridian59.Ogre.Client\bin"
 	SET "M59_OGRE_PATCHER_BIN=%M59_OGRE_BASE%\Meridian59.Patcher\bin\x86\Release"
 	SET "M59_OGRE_SETUP_BIN=%M59_OGRE_BASE%\Meridian59.Ogre.Setup\Release"
+	SET "M59_OGRE_RESOURCE=%M59_OGRE_BASE%\Resources"
 
 REM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 REM %                   Patcher Folder (To Upload or Commit                      %
@@ -76,5 +77,11 @@ echo Your directories are setup correctly.
 		copy /Y "%M59_OGRE_SETUP_BIN%\*.exe" "%OGRE_SETUP_FOLDER%\"
 	)
 
+	IF EXIST "%M59_OGRE_RESOURCE%\ui\layouts\Meridian59.layout" (
+		echo Copying: %M59_OGRE_RESOURCE%\ui\layouts\Meridian59.layout
+		copy /Y "%M59_OGRE_RESOURCE%\ui\layouts\Meridian59.layout" "%OGRE_PATCH_FOLDER%\resources\ui\layouts\Meridian59.layout"
+	)
+	
+	
 	pause
 
