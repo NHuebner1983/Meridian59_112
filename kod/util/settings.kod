@@ -38,12 +38,21 @@ properties:
 
    // Changed the wait for monsters to spawn.  A decrease means things
    //  spawn faster (less time waiting between spawns).
-   piSpawnRate = 110
+   piSpawnRate = 130
 
    //
    // Player advancement
    //
 
+   // Meditate amounts for each school level
+   // Applies to both WC and Spells
+   piMeditateLevelOne = 20
+   piMeditateLevelTwo = 30
+   piMeditateLevelThree = 45
+   piMeditateLevelFour = 70
+   piMeditateLevelFive = 100
+   piMeditateLevelSix = 160
+   
    piKillKarmaSwingNeutral = 3
    piKillKarmaSwingMonster = 6
    piKillKarmaSwingPlayer = 10
@@ -78,8 +87,11 @@ properties:
    // The training points we grant players each day to reward them for logging on.
    piLogonBonus = 500
 
+   // The base amount of unbound energy to receive
+   piUnboundBase = 25
+   
    // The maximum amount of unbound energy we can absorb
-   piUnboundMax = 1000
+   piUnboundMax = 10000
 
    // The maximum percentage of XP we can absorb as unbound energy.
    piUnboundAbsorption = 100
@@ -88,7 +100,7 @@ properties:
    piUnboundDecay = 10
 
    // Delay between receiving unbound energy and decay setting in in ms.
-   piUnboundDelay = 30000
+   piUnboundDelay = 10000
 
    // XP percent awarded, can be raised to give a bonus.
    piXPPercent = 100
@@ -103,7 +115,7 @@ properties:
    // The maximum HP a player can suicide their character at, without admin
    // help. Prevents people making mistakes in a fit of rage, or suiciding
    // hacked accounts.
-   piMaxSuicideHP =  60
+   piMaxSuicideHP =  100
 
    // FALSE if newbies never drop loot, TRUE if they do if they don't have
    // the "new to the lands" tag.
@@ -124,7 +136,7 @@ properties:
    // Can't cast a teleport spell until this long after attacking someone.  Prevents
    // hit-and-run.  If 0, there's no restriction on when the spell can be cast.
    // Time in seconds.
-   piTeleportAttackDelaySec = 60
+   piTeleportAttackDelaySec = 240
 
    // Rescue always takes at least this long to cast
    piRescueBaseDelaySec = 2
@@ -177,7 +189,13 @@ properties:
    // If enabled, unsafe penalties send angeled players to their last safe
    // place. This is intended to prevent being players 'scouting' with mules.
    pbAngelReturnToSafetyPenaltiesEnable = TRUE
-
+   
+   // Allows players to phase while PVP Flagged
+   pbPhaseInPVP = TRUE
+   
+   // Allows players to phase while wanted for murder
+   pbPhaseWhileMurderer = TRUE
+   
    // PVP Death on Penalty
    // Only enable this if you want to prevent players from exploiting Alt-F4 / Phase.
    pbPVPDeathOnPenalty = TRUE
@@ -228,7 +246,7 @@ properties:
 
    // Minimum number of HP you have to have to vote for or become
    // Justicar
-   piMinHPForJusticar = 100
+   piMinHPForJusticar = 150
 
    // Cost for Caramo to change a player's name.
    piNameChangeCost = 5000000
@@ -250,10 +268,10 @@ properties:
    pbRiijaSwordDropOnDeath = FALSE
 
    // Replaces old constant
-   piPKillEnableHP = 100
+   piPKillEnableHP = 75
    
    // Replaces old constant
-   piIntrigueEnableHP = 100
+   piIntrigueEnableHP = 75
    
    // If set to true, Resist Rings will lose durability upon taking an appropriate elemental hit.
    piResistRingLoseDurability = TRUE
@@ -265,7 +283,7 @@ properties:
    piTempSafeMinutes = 360
 
    // Revenant speed setting
-   piRevSpeed = 10
+   piRevSpeed = 20
 
    // The divisor for all skill post-softcap imp rates. Higher means harder.
    // One means softcaps don't matter at all.
@@ -288,13 +306,13 @@ properties:
    piBroadcastManaPercent = 10
 
    // Chance for stormy weather
-   piStormChance = 15
+   piStormChance = 5
 
    // Setting to allow users to remove their own posts.
    pbCanUserRemoveOwnPosts = TRUE
 
    // How many rods can be picked up at one time.
-   piRodMax = 5
+   piRodMax = 10
 
    // Do safe rooms recharge rods?
    pbInnsRechargeRods = FALSE
@@ -304,7 +322,7 @@ properties:
    pbFactionLoss = FALSE
 
    // Do all users get "logged on for first time" messages?
-   pbMsgAllForNewUser = FALSE
+   pbMsgAllForNewUser = TRUE
 
    // Do soldiers attack all factioned players?
    pbTroopsAttackNonShielded = FALSE
@@ -333,6 +351,69 @@ messages:
       return;
    }
 
+   GetMeditateLevelOne()
+   {
+	   return piMeditateLevelOne;
+   }
+   
+   GetMeditateLevelTwo()
+   {
+	   return piMeditateLevelTwo;
+   }
+   
+   GetMeditateLevelThree()
+   {
+	   return piMeditateLevelThree;
+   }
+   
+   GetMeditateLevelFour()
+   {
+	   return piMeditateLevelFour;
+   }
+
+   GetMeditateLevelFive()
+   {
+	   return piMeditateLevelFive;
+   }
+   
+   GetMeditateLevelSix()
+   {
+	   return piMeditateLevelSix;
+   }
+   
+   GetMeditateRatioByLevel(level=1)
+   {
+	   // All WC/Spells are now calculated by level.
+	   
+	   if level = 1
+	   {
+		   return Send(self,@GetMeditateLevelOne);
+	   }
+	   if level = 2
+	   {
+		   return Send(self,@GetMeditateLevelTwo);
+	   }
+	   if level = 3
+	   {
+		   return Send(self,@GetMeditateLevelThree);
+	   }
+	   if level = 4
+	   {
+		   return Send(self,@GetMeditateLevelFour);
+	   }
+	   if level = 5
+	   {
+		   return Send(self,@GetMeditateLevelFive);
+	   }
+	   if level = 6
+	   {
+		   return Send(self,@GetMeditateLevelSix);
+	   }
+	   
+	   return Send(self,@GetMeditateLevelSix);
+   }
+      
+   
    GetPKillEnableHP()
    {
       return piPKillEnableHP;
@@ -414,6 +495,11 @@ messages:
    GetLogonBonus()
    {
       return piLogonBonus;
+   }
+
+   GetUnboundBase()
+   {
+      return piUnboundBase;
    }
 
    GetUnboundMax()
@@ -587,7 +673,19 @@ messages:
    {
       return pbLogSafePenaltyEnable;
    }
-
+   
+   // Allows players to phase while PVP Flagged
+   PhaseInPVP()
+   {
+	   return pbPhaseInPVP;
+   }
+   
+   // Allows players to phase while wanted for murder
+   PhaseWhileMurderer()
+   {   
+	   return pbPhaseWhileMurderer;
+   }
+   
    // Returns if a player should receive a death when they were recently in PVP.
    PVPDeathOnPenalty()
    {

@@ -2220,7 +2220,8 @@
    SID_PHASE = 186
    SID_MEDITATE = 187
    SID_UNHOLY_TOUCH = 188
-
+   SID_GUILDCONVEYANCE = 189
+   
    // Depreciated spell IDs
    SID_LIGHTNING = 1                   // use SID_LIGHTNING_BOLT
    SID_NIGHTVISION = 4                 // use SID_NIGHT_VISION
@@ -2416,16 +2417,12 @@
    // training points per kill.
    MAX_TRAINING_POINTS_PER_KILL = 2500
    
-   // Training Points to award before reaching the base HP (150)
-   TP_ALWAYS_AWARD_PER_KILL = 25
+   // New characters start out with 10,000 training points to get them started
+   NEW_PLAYER_TRAINING_POINTS = 10000
    
-   // Training Points to award between base HP and Player's Max Stamina HP
-   TP_ADDITIONAL_ABOVE_BASE_HP = 25
-   
-   // Training Points to award after Player's Stamina Max HP
-   // The above 2 variables add to this one, totaling (25 + 25 + 50) At Max HP.
-   TP_ADDITIONAL_ABOVE_MAXED_HP = 50
-   
+   // Additional training points to award for each kill
+   TP_AWARD_BONUS_PER_KILL = 20
+      
    // These HP levels can be used to replace monster hard-coded values.
    // It makes it easier to adjust toughness of monsters later on by either lowering or raising them.
       
