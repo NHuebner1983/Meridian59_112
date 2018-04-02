@@ -251,6 +251,7 @@ resources:
       "from your fallen enemy."
    player_unbound_energy_lost = "You channel ~B~t%i~v~B unbound energy "
       "to shape your spell."
+   player_unbound_energy_escapes = "The unbound energy escapes from your soul."
 
    player_health_gain_maxed = "Your health cannot increase any further."
 
@@ -1105,6 +1106,18 @@ properties:
    // piTimeAttackedByPlayer records the last time we were attacked by a player.
    piTimeAttackedByPlayer = 0
    
+   // I attacked a guild war enemy
+   bAttackGuildWar = FALSE
+   
+   // I was attacked by a guild war enemy
+   bAttackedByGuildWar = FALSE
+   
+   // I attacked a shielded enemy
+   bAttackShield = FALSE
+   
+   // I was attacked by a shielded enemy
+   bAttackedByShield = FALSE
+   
    // piDeathcost is used to tell the underworld what percent of normal
    //  penalties to apply when the players leaves.  FALSE means no penalties.
    piDeathCost = 100
@@ -1274,6 +1287,55 @@ messages:
       return 0;
    }
 
+   GetAttackGuildWar()
+   {
+	   return bAttackGuildWar;
+   }
+
+   GetAttackedByGuildWar()
+   {
+	   return bAttackedByGuildWar;
+   }
+
+   GetAttackShield()
+   {
+	   return bAttackShield;
+   }
+
+   GetAttackedByShield()
+   {
+	   return bAttackedByShield;
+   }
+   
+   SetAttackGuildWar()
+   {
+	   bAttackGuildWar = TRUE;
+	   
+	   return;
+   }
+
+   SetAttackedByGuildWar()
+   {
+	   bAttackedByGuildWar = TRUE;
+	   
+	   return;
+   }
+
+   SetAttackShield()
+   {
+	   bAttackShield = TRUE;
+	   
+	   return;
+   }
+
+   SetAttackedByShield()
+   {
+	   bAttackedByShield = TRUE;
+	   
+	   return;
+   }
+   
+   
    SetPlayerFlag(flag=0,value=FALSE,flagset=1)
    "This always requires the POSITIVE flag name."
    {
@@ -2690,6 +2752,9 @@ messages:
       piMax_health = piBase_max_health;
       Send(self,@GainBaseMaxHealth);
       
+	  // Give the player some training points to get going
+	  Send(self,@AddTrainingPoints,#points=NEW_PLAYER_TRAINING_POINTS,#bCap=FALSE);
+
       if Send(self,@CheckLog)
       {
          Debug("LOG:  ",vrName," restarted character: ",piMax_health,
@@ -2967,9 +3032,12 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
-      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_PHASE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_MEDITATE,#initial=TRUE,#iability=1);
+      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_GUILDCONVEYANCE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_SET,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_LOADOUT,#initial=TRUE);
 
       return;
    }
@@ -2986,18 +3054,22 @@ messages:
       local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
 
       // Give the poor newbie an weapon and a bit of cash.
+	  // A bunch of other things that they can learn which exist in the game.
       Send(self,@NewHold,#what=Create(&Mace));
-      Send(self,@NewHold,#what=Create(&Money,#number=500));
-      Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
-      Send(self,@AddReagentsForSpells,#iNumCasts=10);
-
-      // If player hasn't suicided in last 5 hours, give them cash and prizes!
-      if (GetTime() - piLast_restart_time) > (5*60*60)   
-      {
-         Send(self,@NewHold,#what=Create(&Money,#number=500));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
-         Send(self,@AddReagentsForSpells,#iNumCasts=10);
-      }
+      Send(self,@NewHold,#what=Create(&Gauntlet));
+      Send(self,@NewHold,#what=Create(&SimpleHelm));
+      Send(self,@NewHold,#what=Create(&LeatherArmor));
+      Send(self,@NewHold,#what=Create(&Tanktop,#color=XLAT_TO_RED));
+	  Send(self,@NewHold,#what=Create(&PantsC,#translation=PT_GRAY_TO_LRED));
+	  
+	  // Give some money
+      Send(self,@NewHold,#what=Create(&Money,#number=1500));
+	  
+	  // Record economy
+      Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=1500);
+      
+	  // Give enough reagents for 10 casts
+	  Send(self,@AddReagentsForSpells,#iNumCasts=10);
 
       return;
    }
@@ -4661,7 +4733,7 @@ messages:
 
       return TRUE;
    }
-
+   
    CheckStatusAndSafety(victim=$,report=TRUE,actual=TRUE,minion=FALSE,
                         stroke_obj=$)
    "CF_SAFETY_OFF prevents accidental attacks. You can always successfully "
@@ -4720,7 +4792,21 @@ messages:
          // Okay, attack is against a player, so record the time
          if actual = TRUE
          {
-            piTimeAttackedPlayer = GetTime();
+			if poGuild <> $ AND oEnemyGuild <> $ AND Send(poGuild,@IsMutualEnemy,#otherguild=oEnemyGuild)
+			{
+				// Mutual guild war attack
+				Send(self,@SetAttackGuildWar);
+				Send(victim,@SetAttackedByGuildWar);
+			}
+			
+			if oSoldierShield <> $ AND Send(oSoldierShield,@IsEnemyAttack,#what=victim)
+			{
+				// Mutual soldier shield attack
+				Send(self,@SetAttackShield);
+				Send(victim,@SetAttackedByShield);
+			}
+			
+			piTimeAttackedPlayer = GetTime();
          }
 
          return TRUE;
@@ -5026,7 +5112,7 @@ messages:
       // initially, but then not again until PVP_NOTIFY_DECAY has passed
       if IsClass(what,&User)
       {
-         Send(what,@DoPvpNotify);
+         Send(what,@DoPvpNotify,#attacker=self);
       }
 
       // Okay, checking is done, attack is okay.  Do the animation thing.
@@ -7595,6 +7681,11 @@ messages:
       return;
    }
 
+   GetTotalMods()
+   {
+	   return (piMightMod + piIntellectMod + piAgilityMod + piAimMod + piStaminaMod + piMysticismMod);
+   }
+   
    GetMight()
    {
       return bound((piMight + piMightMod),1,MAXIMUM_STAT);
@@ -9172,33 +9263,42 @@ messages:
 		 
          // Also grant unbound energy for your own kills.
          // Unbound energy allows free spell casts.
-         if IsClass(what,&Monster) AND killing_blow
+         if IsClass(what,&Monster)
          {
-            // Let's figure the amount, mostly based on monster level.
-            iUnbound = monster_level * Send(SETTINGS_OBJECT,@GetUnboundAbsorption)
-               * (Random(30,80) + (Send(self,@GetMysticism) * 2 / 5)) / 10000;
-
-            // Scale with distance to victim.
-            iDist = Bound(Send(self,@SquaredFineDistanceTo3D,#what=what),1,$);
-            // 36864 is 3 range in fine units, cf. SquaredFineDistanceTo3D.
-            iUnbound = Bound(iUnbound * 36864 / iDist,$,iUnbound);
-
-            // Scale with player level.
-            iDifference = piMax_health - monster_level;
-            if iDifference > 10
-            {
-               iUnbound = Bound(iUnbound * 100 / (iDifference * iDifference),$,iUnbound);
-            }
-
-            // Grant only one fourth of the energy if the mob didn't attack the player.
-            if ((piFlags & PFLAG_TOOK_DAMAGE) OR (piFlags & PFLAG_DODGED))
-            {
-               Send(self,@AddUnboundEnergy,#iAmount=iUnbound);
-            }
-            else
-            {
-               Send(self,@AddUnboundEnergy,#iAmount=iUnbound / 4);
-            }
+			// Killing blow!
+			if killing_blow
+			{
+				// You may only earn unbound energy if you earned XP and an XP Bonus.
+				if ((iXP AND iXPBonus) OR NOT bSpit)
+				{
+					// Earn the base amount multiplied by monster level divided by 10
+					// Example:   25 * 200 = 5000  /  10  = 500 unbound energy.
+					iUnbound = (Send(SETTINGS_OBJECT,@GetUnboundBase) * monster_level) / 10;
+					
+					if ((piFlags & PFLAG_TOOK_DAMAGE) OR (piFlags & PFLAG_DODGED))
+					{
+					   // Grant full if the player dodged or took damage from monster
+					   Send(self,@AddUnboundEnergy,#iAmount=iUnbound);
+					}
+					else
+					{
+					   // Grand half if player did not take damage from monster
+					   Send(self,@AddUnboundEnergy,#iAmount=iUnbound / 2);
+					}
+				}
+			}
+			else
+			{
+				// Group kill most likely.
+				// You may only earn unbound energy if you earned an XP Bonus.
+				if iXPBonus OR NOT bSpit
+				{
+					// Earn the base amount multiplied by monster level divided by 10
+					// Example:   25 * 200 = 5000  /  100  = 50 unbound energy.
+					iUnbound = (Send(SETTINGS_OBJECT,@GetUnboundBase) * monster_level) / 100;
+					Send(self,@AddUnboundEnergy,#iAmount=iUnbound);
+				}
+			}
          }
 
 		 iPrevTrainingPoints = piTraining_points;
@@ -9212,23 +9312,13 @@ messages:
          {
 			 
 			// Give point bonus for a successful kill
-			iTrainingPointsAwarded = TP_ALWAYS_AWARD_PER_KILL;
-			
-			// Give point bonus if you reach the base HP
-			if Send(self,@GetMaxHealth) >= HP_BASE_MAX_ONE_STAMINA
-			{
-				iTrainingPointsAwarded += TP_ADDITIONAL_ABOVE_BASE_HP;
-			}
-			
-			// Give point bonus if you reach your max HP
-			if Send(self,@GetMaxHealth) >= (HP_BASE_MAX_ONE_STAMINA + Send(self,@GetStamina))
-			{
-				iTrainingPointsAwarded += TP_ADDITIONAL_ABOVE_MAXED_HP;
-			}
+			iTrainingPointsAwarded = TP_AWARD_BONUS_PER_KILL;
 
-            piTraining_points += iTrainingPointsAwarded
-               + (Send(what,@GetBoostedLevel)
-               / Send(Send(SYS,@GetSurvivalRoomMaintenance),@GetSurvivalTP));			   
+			// Give training points which match the player's HP
+			iTrainingPointsAwarded += Send(self,@GetMaxHealth);
+			
+			// Set the final total training points the user will have
+            piTraining_points += iTrainingPointsAwarded;
          }
 		 
          // Let the player know how many training points they have, if they
@@ -12270,12 +12360,12 @@ messages:
 
    GetBulkMax()
    {
-      return viBulk_hold_max + (Send(self,@GetMight) * 20);
+      return (viBulk_hold_max + (Send(self,@GetMight) * 20)) * 2;
    }
 
    GetWeightMax()
    {
-      return viWeight_hold_max + (Send(self,@GetMight) * 20);
+      return (viWeight_hold_max + (Send(self,@GetMight) * 20) * 2);
    }
 
    CountKnownAtLevel(school=$,level=$)
@@ -14622,10 +14712,58 @@ messages:
    {
 	   piTimeAttackedPlayer = 0;
 	   piTimeAttackedByPlayer = 0;
+	   	   
+	   // Reset all of my PVP type flags
+	   bAttackGuildWar = FALSE;
+	   bAttackedByGuildWar = FALSE;
+	   bAttackShield = FALSE;
+	   bAttackedByShield = FALSE;
+   	   
+	   Debug("PVP Flags reset: ", Send(self,@GetName));
 	   
 	   return;
    }
 
+	TryToPVPFlag(attacker=$, victim=$)
+	{
+		local poGuild, oEnemyGuild, oSoldierShield;
+		
+		if attacker = $ OR victim = $
+		{
+			// No harm, no foul.
+			return;
+		}
+
+		// Victim's Guild
+		poGuild = Send(victim,@GetGuild);
+
+		// Attacker's Guild
+		oEnemyGuild = Send(attacker,@GetGuild);
+
+		// Attacker's Shield
+		oSoldierShield = Send(attacker,@FindUsing,#class=&SoldierShield);
+		
+		if poGuild <> $ AND oEnemyGuild <> $ AND Send(poGuild,@IsMutualEnemy,#otherguild=oEnemyGuild)
+		{
+			// Mutual guild war attack
+			Send(attacker,@SetAttackGuildWar);
+		}
+
+		if oSoldierShield <> $ AND Send(oSoldierShield,@IsEnemyAttack,#what=victim)
+		{
+			// Mutual soldier shield attack
+			Send(attacker,@SetAttackShield);
+		}
+		
+		return;
+	}
+   
+   IsGuildWarOrShieldFlagged()
+   {
+	   return Send(self,@IsMurderer) OR (Send(self,@GetAttackGuildWar) OR Send(self,@GetAttackedByGuildWar) OR Send(self,@GetAttackShield) OR Send(self,@GetAttackedByShield));
+	   
+   }
+   
    SendLightingInformation()
    {
       local i, oLightObject, iColor, iIntensity;
@@ -15126,7 +15264,7 @@ messages:
 
    StartPhaseTimer()
    {
-      local i;
+      local i, diffTime;
 
       // If phase time regen timer is active, delete it.
       if (ptPhaseRegenTimer <> $)
@@ -15153,16 +15291,14 @@ messages:
          ptPhaseVisualEffectTimer = CreateTimer(self,@PhaseVisualEffectTimer,2000);
       }
 
-      // Add phase time to piTimeAttackedPlayer if it is currently
-      // preventing the player from casting escape spells.
-      if piTimeAttackedPlayer
-            + Send(SETTINGS_OBJECT,@TeleportAttackDelaySec)
-            > GetTime()
-      {
-         piTimeAttackedPlayer = piTimeAttackedPlayer
-                                 + (Send(self,@GetRemainingPhaseTime) / 1000);
-      }
 
+	  // Make sure they are still PVP flagged by time their penalty ends.
+	  // If they make it to safety, they will be PVP Flagged from the beginning again.
+	  if Send(self,@IsRecentPvPCombatant)
+	  {
+		  Send(self,@SetHighestPvpTime,#addSeconds=(Send(self,@GetRemainingPhaseTime) / 1000));
+	  }
+	  
       return;
    }
    
@@ -15360,9 +15496,9 @@ messages:
       return piTimeAttackedByPlayer;
    }
 
-   DoPvpNotify()
+   DoPvpNotify(attacker=$)
    {
-      local iTime, iNotify;
+      local iTime, iNotify, poGuild, oEnemyGuild, oSoldierShield;
 
       iTime = GetTime();
       iNotify = iTime - PVP_NOTIFY_DECAY;
@@ -15374,10 +15510,52 @@ messages:
       {
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=pvp_notify_wav);
       }
+	  
+	  // Destroy ubound energy during pvp
+	  piUnbound_energy = 0;
 
       // Set our attacked-by time here.
       piTimeAttackedByPlayer = iTime;
 
+	  // Attacker is not a player.
+	  if attacker = $ OR NOT IsClass(attacker,&Player)
+	  {
+		  return;
+	  }
+	  	  
+	  // My Guild
+	  poGuild = Send(self,@GetGuild);
+	  
+	  // Their Guild
+      oEnemyGuild = Send(attacker,@GetGuild);
+	  
+	  // Their Shield
+      oSoldierShield = Send(attacker,@FindUsing,#class=&SoldierShield);
+	  
+	  // Check if their guild and my guild are at war
+	  if poGuild <> $ AND oEnemyGuild <> $ AND Send(poGuild,@IsMutualEnemy,#otherguild=oEnemyGuild)
+	  {
+		  // Mutual guild war attack
+		  Send(self,@SetAttackGuildWar);
+		  Send(attacker,@SetAttackedByGuildWar);
+	  }
+	  
+	  // Check if a murderer/orange attacked a shield holder
+	  // You're a soldier - you can't get out of this without a fight.
+	  if attacker <> $ AND Send(self,@FindUsing,#class=&SoldierShield) <> $ AND Send(attacker,@IsMurderer)
+	  {
+		  Send(self,@SetAttackShield);
+		  Send(attacker,@SetAttackedByShield);
+	  }
+	  
+	  // Check if their shield registered an enemy attack from my shield
+	  if oSoldierShield <> $ AND Send(oSoldierShield,@IsEnemyAttack,#what=self)
+	  {
+		  // Mutual soldier shield attack
+		  Send(self,@SetAttackShield);
+		  Send(attacker,@SetAttackedByShield);
+	  }
+	  
       return;
    }
 
