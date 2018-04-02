@@ -96,7 +96,8 @@ classvars:
 properties:
 
    piPhaseDelay = 1500
-
+   bForceDeathOnPenalty = FALSE
+   
 messages:
 
    ResetReagents()
@@ -208,18 +209,34 @@ messages:
    {
       local oRoom;
 
+	  bForceDeathOnPenalty = FALSE;
+	  
       if Send(who,@CheckPlayerFlag,#flag=PFLAG_PHASED)
       {
          Send(who,@RemoveEnchantment,#what=self);
       }
       else
       {
-		  if Send(SETTINGS_OBJECT,@PVPDeathOnPenalty) AND Send(who,@IsRecentPvPCombatant)
+		  /*if Send(who,@IsMurderer) AND NOT Send(SETTINGS_OBJECT, @PhaseWhileMurderer)
 		  {
+			// Murderers are not allowed to phase.
 			Send(who,@MsgSendUser,#message_rsc=Phase_pvp_src);
-			
+
+			return FALSE;
+		  }*/
+		  
+		  if Send(who,@IsRecentPvPCombatant) AND NOT Send(SETTINGS_OBJECT,@PhaseInPVP)
+		  {
+			// Players may not phase while PVP Flagged.
+			Send(who,@MsgSendUser,#message_rsc=Phase_pvp_src);
+
 			return FALSE;
 		  }
+		  
+		 if Send(SETTINGS_OBJECT,@PVPDeathOnPenalty) AND Send(who,@IsRecentPvPCombatant)
+		 {
+			bForceDeathOnPenalty = TRUE;
+		 }
 		  
          Send(self,@AdjustVisualEffectBasedOnTimeRemaining,#who=who);
          Send(who,@BreakTrance,#event=EVENT_STEER);
