@@ -73,7 +73,7 @@ properties:
    pbCanCastFromAnywhere = TRUE
 
 messages:
-
+   
    ResetReagents()
    {
       plReagents = $;
@@ -87,11 +87,9 @@ messages:
       local oRoom, iRoomNum;
 
       // Can't cast just after attacking someone
-      if Send(who,@GetLastPlayerAttackTime)
-         + Send(SETTINGS_OBJECT,@TeleportAttackDelaySec)
-         > GetTime()
+      if Send(who,@IsRecentPVPCombatant)
       {
-         Send(who,@MsgSendUser,#message_rsc=spell_too_soon_since_attacking);
+		 Send(who,@MsgSendUser,#message_rsc=spell_too_soon_since_attacking);
 
          return FALSE;
       }

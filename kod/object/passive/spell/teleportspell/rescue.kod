@@ -69,9 +69,7 @@ messages:
    CanPayCosts(who = $,lTargets = $)
    {
       // Can't cast just after attacking someone
-      if Send(who,@GetLastPlayerAttackTime)
-         + Send(SETTINGS_OBJECT,@TeleportAttackDelaySec)
-         > GetTime()
+      if Send(who,@IsRecentPVPCombatant)
       {
          Send(who,@MsgSendUser,#message_rsc=spell_too_soon_since_attacking);
 
@@ -98,7 +96,7 @@ messages:
    CastSpell(who = $, iSpellPower = 0)
    {
       local iDelay;
-
+	  
       // Start with the base time.  Reduce time by spellpower.
       iDelay = 1000 * Send(SETTINGS_OBJECT, @RescueBaseDelaySec);
       iDelay = iDelay - (iSpellPower * iDelay) / 100 / 4;
